@@ -1,0 +1,1322 @@
+diff --git a/src/pages/Home.tsx b/src/pages/Home.tsx
+index 6aed293..d863edf 100644
+--- a/src/pages/Home.tsx
++++ b/src/pages/Home.tsx
+@@ -1,5 +1,5 @@
+ import React, { useState, useEffect } from 'react';
+-import { MapPin, Volume2, Send, Heart, ChevronRight, Languages, X, AlertTriangle, Sun, Calendar, Camera, Hotel, Wifi, Utensils, Navigation, Phone, Sparkles } from 'lucide-react';
++import { MapPin, Volume2, Send, Heart, ChevronRight, Languages, X, AlertTriangle, Sun, Calendar, Camera, Hotel, Wifi, Utensils, Navigation, Phone, Sparkles, CloudRain, Plus, ShoppingCart, Ticket, Trash2, Play, Bot, Clock, Footprints, Car, Flame } from 'lucide-react';
+ import { motion, AnimatePresence } from 'motion/react';
+ import { Page, Trip } from '../types';
+ 
+@@ -60,11 +60,78 @@ const SUGGESTED_TASKS = [
+   { title: '做规划', desc: '规划助手计算您的最优旅游路线', query: '帮我规划一个贵州旅行行程', icon: '🗺️', bg: 'bg-blue-50' },
+   { title: '找服务', desc: '订购助手提供便捷的酒店景区预订服务', query: '帮我找附近的酒店和门票', icon: '📍', bg: 'bg-green-50' },
+   { title: '写游记', desc: '旅行记录官生成专属游记与回忆', query: '帮我写一篇贵州旅行游记', icon: '✏️', bg: 'bg-yellow-50' },
++  { title: '看地图', desc: '手绘地图探索全省旅游资源', query: '打开全省旅游地图', icon: '🗺️', bg: 'bg-teal-50' },
+   { title: '来旅居', desc: '旅居管家寻找舒适的旅居地点', query: '推荐一个贵州适合旅居的地方', icon: '🏠', bg: 'bg-purple-50' },
+-  { title: '查赛事', desc: '专业赛事助手提供多维度跑者指南', query: '打开赛事助手', icon: '🏃', bg: 'bg-orange-50' },
++  { title: '查活动', desc: '活动管家提供赛事、演出等多维度指南', query: '打开活动助手', icon: '🎟️', bg: 'bg-orange-50' },
++];
++
++export type WidgetCategory = 'weather' | 'map' | 'calendar' | 'countdown' | 'traffic' | 'coupon' | 'footprint';
++export type WidgetSize = '1x1' | '2x1' | '2x2';
++
++export interface WidgetDef {
++  id: string;
++  category: WidgetCategory;
++  size: WidgetSize;
++  title: string;
++  icon?: React.ReactNode;
++}
++
++export type ContentModuleType = 'recommend' | 'weekend' | 'masonry' | 'banner' | 'topic' | 'live';
++
++export interface ContentModuleDef {
++  id: ContentModuleType;
++  title: string;
++  desc: string;
++}
++
++export const AVAILABLE_CONTENT_MODULES: ContentModuleDef[] = [
++  { id: 'recommend', title: '好aoao好玩\'ツ', desc: '推荐扫街榜单' },
++  { id: 'weekend', title: 'Hiiiiii玩周末 👀', desc: 'AI周末计划推荐' },
++  { id: 'masonry', title: '来都来lie，看一哈 🙄', desc: '瀑布流内容探索' },
++  { id: 'banner', title: '运营活动横幅', desc: '展示最新活动海报' },
++  { id: 'topic', title: '热门话题榜', desc: '用户讨论最多的话题' },
++  { id: 'live', title: '景区慢直播', desc: '全省景区实时直播' }
++];
++
++export const AVAILABLE_WIDGETS: WidgetDef[] = [
++  { id: 'weather_2x2', category: 'weather', size: '2x2', title: '实时天气', icon: <Sun size={24} className="text-blue-500" /> },
++  { id: 'weather_2x1', category: 'weather', size: '2x1', title: '天气速览', icon: <Sun size={24} className="text-blue-500" /> },
++  { id: 'weather_1x1', category: 'weather', size: '1x1', title: '气温', icon: <Sun size={24} className="text-blue-500" /> },
++
++  { id: 'map_2x2', category: 'map', size: '2x2', title: '活点地图(全览)', icon: <MapPin size={24} className="text-rose-500" /> },
++  { id: 'map_2x1', category: 'map', size: '2x1', title: '活点地图', icon: <MapPin size={24} className="text-rose-500" /> },
++  { id: 'map_1x1', category: 'map', size: '1x1', title: '附近', icon: <MapPin size={24} className="text-rose-500" /> },
++
++  { id: 'calendar_2x2', category: 'calendar', size: '2x2', title: '活动日历(详细)', icon: <Calendar size={24} className="text-orange-500" /> },
++  { id: 'calendar_2x1', category: 'calendar', size: '2x1', title: '活动日历', icon: <Calendar size={24} className="text-orange-500" /> },
++  { id: 'calendar_1x1', category: 'calendar', size: '1x1', title: '今日', icon: <Calendar size={24} className="text-orange-500" /> },
++
++  { id: 'countdown_2x2', category: 'countdown', size: '2x2', title: '行程倒计时(大)', icon: <Clock size={24} className="text-indigo-500" /> },
++  { id: 'countdown_2x1', category: 'countdown', size: '2x1', title: '行程倒计时', icon: <Clock size={24} className="text-indigo-500" /> },
++  { id: 'countdown_1x1', category: 'countdown', size: '1x1', title: '倒计时', icon: <Clock size={24} className="text-indigo-500" /> },
++
++  { id: 'traffic_2x2', category: 'traffic', size: '2x2', title: '实时路况(大)', icon: <Car size={24} className="text-blue-500" /> },
++  { id: 'traffic_2x1', category: 'traffic', size: '2x1', title: '实时路况', icon: <Car size={24} className="text-blue-500" /> },
++  { id: 'traffic_1x1', category: 'traffic', size: '1x1', title: '路况', icon: <Car size={24} className="text-blue-500" /> },
++
++  { id: 'coupon_2x2', category: 'coupon', size: '2x2', title: '每日特惠(大)', icon: <Ticket size={24} className="text-red-500" /> },
++  { id: 'coupon_2x1', category: 'coupon', size: '2x1', title: '每日特惠', icon: <Ticket size={24} className="text-red-500" /> },
++  { id: 'coupon_1x1', category: 'coupon', size: '1x1', title: '特惠', icon: <Ticket size={24} className="text-red-500" /> },
++
++  { id: 'footprint_2x2', category: 'footprint', size: '2x2', title: '旅行足迹(大)', icon: <Footprints size={24} className="text-emerald-500" /> },
++  { id: 'footprint_2x1', category: 'footprint', size: '2x1', title: '旅行足迹', icon: <Footprints size={24} className="text-emerald-500" /> },
++  { id: 'footprint_1x1', category: 'footprint', size: '1x1', title: '足迹', icon: <Footprints size={24} className="text-emerald-500" /> },
+ ];
+ 
+ export default function Home({ onNavigate }: { onNavigate: (page: Page, data?: any) => void }) {
++  const [mainTab, setMainTab] = useState<'发现' | '智能体广场'>(() => {
++    return (localStorage.getItem('hx_main_tab') as '发现' | '智能体广场') || '发现';
++  });
++
++  useEffect(() => {
++    localStorage.setItem('hx_main_tab', mainTab);
++  }, [mainTab]);
++
+   const [activeTab, setActiveTab] = useState('精选');
+   const [cards, setCards] = useState<typeof ALL_CARDS>([]);
+   const [isTripExpanded, setIsTripExpanded] = useState(false);
+@@ -75,6 +142,57 @@ export default function Home({ onNavigate }: { onNavigate: (page: Page, data?: a
+   const [isTaskSquareOpen, setIsTaskSquareOpen] = useState(false);
+   const [taskInput, setTaskInput] = useState('');
+ 
++  // Widget and Content management state
++  const [isEditingPage, setIsEditingPage] = useState(false);
++  const [showWidgetSelector, setShowWidgetSelector] = useState(false);
++  const [showContentModuleSelector, setShowContentModuleSelector] = useState(false);
++  
++  const [activeContentModules, setActiveContentModules] = useState<ContentModuleType[]>(() => {
++    const savedModules = localStorage.getItem('hx_active_content_modules');
++    if (savedModules) {
++      try {
++        return JSON.parse(savedModules);
++      } catch (e) {
++        console.error('Failed to parse saved content modules', e);
++      }
++    }
++    return ['recommend', 'weekend', 'masonry'];
++  });
++
++  const [activeWidgets, setActiveWidgets] = useState<string[]>(() => {
++    const savedWidgets = localStorage.getItem('hx_active_widgets');
++    if (savedWidgets) {
++      try {
++        return JSON.parse(savedWidgets);
++      } catch (e) {
++        console.error('Failed to parse saved widgets', e);
++      }
++    }
++    return ['weather_2x2', 'map_2x1', 'calendar_2x1', 'countdown_1x1', 'coupon_1x1'];
++  });
++
++  // Recommend filter state
++  const [activeRecommendFilter, setActiveRecommendFilter] = useState('推荐');
++  const RECOMMEND_FILTERS = ['推荐', '赏花踏青', '网红打卡', '温泉泡汤', '博物馆奇妙'];
++
++  // Masonry filter state
++  const [activeMasonryFilter, setActiveMasonryFilter] = useState('音乐节');
++  const MASONRY_FILTERS = [
++    { name: '音乐节', isHot: true },
++    { name: '马拉松', isHot: true },
++    { name: '户外', isHot: false },
++    { name: '体育', isHot: false }
++  ];
++
++  // Save widgets to local storage whenever they change
++  useEffect(() => {
++    localStorage.setItem('hx_active_widgets', JSON.stringify(activeWidgets));
++  }, [activeWidgets]);
++
++  useEffect(() => {
++    localStorage.setItem('hx_active_content_modules', JSON.stringify(activeContentModules));
++  }, [activeContentModules]);
++
+   // Notification state
+   const [notifications, setNotifications] = useState<AppNotification[]>(MOCK_NOTIFICATIONS);
+   const [currentNotifIndex, setCurrentNotifIndex] = useState(0);
+@@ -123,6 +241,410 @@ export default function Home({ onNavigate }: { onNavigate: (page: Page, data?: a
+     });
+   };
+ 
++  const removeWidget = (id: string) => {
++    setActiveWidgets(prev => prev.filter(w => w !== id));
++  };
++
++  const addWidget = (id: string) => {
++    if (!activeWidgets.includes(id)) {
++      setActiveWidgets(prev => [...prev, id]);
++    }
++    setShowWidgetSelector(false);
++  };
++
++  const renderWidget = (id: string) => {
++    const isEditing = isEditingPage;
++    const [category, size] = id.split('_') as [WidgetCategory, WidgetSize];
++    
++    const sizeClasses = {
++      '1x1': 'col-span-1 row-span-1',
++      '2x1': 'col-span-2 row-span-1',
++      '2x2': 'col-span-2 row-span-2'
++    };
++    
++    const wrapperClass = (baseClass: string) => `
++      ${sizeClasses[size]} ${baseClass} relative rounded-2xl shadow-sm overflow-hidden 
++      ${isEditing ? 'border-2 border-dashed border-indigo-400 animate-[jiggle_0.3s_ease-in-out_infinite]' : 'cursor-pointer active:scale-95 transition-transform'}
++    `;
++
++    const DeleteButton = () => isEditing ? (
++      <button 
++        onClick={(e) => { e.stopPropagation(); removeWidget(id); }}
++        className="absolute -top-2 -right-2 z-50 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
++      >
++        <Trash2 size={14} />
++      </button>
++    ) : null;
++
++    switch(category) {
++      case 'weather':
++        if (size === '2x2') {
++          return (
++            <div key={id} className={wrapperClass("bg-gradient-to-br from-blue-400 to-blue-300 text-white flex flex-col justify-between p-3.5")}>
++              <DeleteButton />
++              <div className="absolute top-[-20px] right-[-20px] opacity-20">
++                <Sun size={100} />
++              </div>
++              <div>
++                <div className="flex items-center gap-1 mb-1">
++                  <MapPin size={12} />
++                  <span className="text-xs font-medium">贵阳市</span>
++                </div>
++                <div className="text-3xl font-bold">24°</div>
++                <div className="text-xs opacity-90 mt-0.5">多云转晴 | 空气优</div>
++              </div>
++              <div className="flex justify-between items-end mt-4">
++                <div className="text-[10px] opacity-80">明天 25° 晴</div>
++                <CloudRain size={20} className="opacity-90" />
++              </div>
++            </div>
++          );
++        } else if (size === '2x1') {
++          return (
++            <div key={id} className={wrapperClass("bg-gradient-to-br from-blue-400 to-blue-300 text-white flex items-center justify-between p-3")}>
++              <DeleteButton />
++              <div className="flex items-center gap-2">
++                <Sun size={28} className="text-yellow-200" />
++                <div>
++                  <div className="text-2xl font-bold leading-none">24°</div>
++                  <div className="text-[10px] opacity-90">贵阳市</div>
++                </div>
++              </div>
++              <div className="text-right">
++                <div className="text-xs font-medium">多云转晴</div>
++                <div className="text-[10px] opacity-80">空气优</div>
++              </div>
++            </div>
++          );
++        } else {
++          return (
++            <div key={id} className={wrapperClass("bg-gradient-to-br from-blue-400 to-blue-300 text-white flex flex-col items-center justify-center p-2")}>
++              <DeleteButton />
++              <Sun size={20} className="mb-1 text-yellow-200" />
++              <div className="text-sm font-bold">24°</div>
++              <div className="text-[9px] opacity-90">贵阳</div>
++            </div>
++          );
++        }
++      case 'map':
++        if (size === '2x2') {
++          return (
++            <div key={id} className={wrapperClass("flex flex-col p-3 bg-[#EAF2ED] overflow-hidden")} onClick={() => !isEditing && onNavigate('map-explore')}>
++              <DeleteButton />
++              {/* Hand-drawn map pattern */}
++              <div className="absolute inset-0 opacity-30" style={{
++                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232C3E50' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
++              }} />
++              {/* Abstract map outline */}
++              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
++                <svg viewBox="0 0 400 400" className="w-[150%] h-[150%] opacity-20 text-emerald-800">
++                  <path d="M150,50 Q200,30 250,60 T350,150 Q360,200 320,250 T280,350 Q200,380 150,330 T50,250 Q30,180 80,120 T150,50 Z" fill="none" stroke="currentColor" strokeWidth="4" strokeDasharray="10,10" />
++                </svg>
++              </div>
++              <div className="relative z-10 flex-1 flex flex-col justify-between">
++                <div className="bg-white/90 self-start px-2 py-1 rounded-full text-[10px] font-bold text-emerald-700 shadow-sm flex items-center gap-1 backdrop-blur-sm border border-emerald-100">
++                  <MapPin size={12} className="text-orange-500" />
++                  <span>全省手绘地图</span>
++                </div>
++                <div>
++                  <div className="flex items-center gap-1 mb-1">
++                    <div className="flex -space-x-1">
++                      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80" className="w-6 h-6 rounded-full border-2 border-white object-cover" />
++                      <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&q=80" className="w-6 h-6 rounded-full border-2 border-white object-cover" />
++                      <div className="w-6 h-6 rounded-full bg-orange-100 border-2 border-white flex items-center justify-center text-[9px] font-bold text-orange-600">+12</div>
++                    </div>
++                  </div>
++                  <div className="text-xs font-bold text-gray-800 bg-white/60 px-1.5 py-0.5 rounded inline-block backdrop-blur-sm">12位好友在附近</div>
++                </div>
++              </div>
++            </div>
++          );
++        } else if (size === '2x1') {
++          return (
++            <div key={id} className={wrapperClass("flex flex-col justify-end p-2.5 bg-[#EAF2ED] overflow-hidden")} onClick={() => !isEditing && onNavigate('map-explore')}>
++              <DeleteButton />
++              <div className="absolute inset-0 opacity-30" style={{
++                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232C3E50' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
++              }} />
++              <div className="absolute top-1 left-1/2 -translate-x-1/2 text-orange-500 drop-shadow-md">
++                <MapPin size={24} fill="currentColor" className="text-orange-500" />
++              </div>
++              <div className="relative z-10 w-full">
++                <div className="flex items-center gap-1 mb-1">
++                  <div className="flex -space-x-1">
++                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80" className="w-5 h-5 rounded-full border-2 border-white object-cover" />
++                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&q=80" className="w-5 h-5 rounded-full border-2 border-white object-cover" />
++                    <div className="w-5 h-5 rounded-full bg-orange-100 border-2 border-white flex items-center justify-center text-[8px] font-bold text-orange-600">+8</div>
++                  </div>
++                </div>
++                <div className="flex items-center gap-1">
++                  <span className="text-[9px] font-bold text-emerald-800 bg-white/90 px-1.5 py-0.5 rounded shadow-sm backdrop-blur-sm border border-emerald-100">10人共享</span>
++                  <span className="text-[9px] font-bold text-orange-800 bg-orange-100/90 px-1.5 py-0.5 rounded shadow-sm backdrop-blur-sm">321m</span>
++                </div>
++              </div>
++            </div>
++          );
++        } else {
++          return (
++            <div key={id} className={wrapperClass("bg-[#EAF2ED] flex flex-col items-center justify-center p-2")} onClick={() => !isEditing && onNavigate('map-explore')}>
++              <DeleteButton />
++              <div className="bg-white/80 p-2 rounded-full mb-1 shadow-sm border border-emerald-100">
++                <MapPin size={18} className="text-orange-500" />
++              </div>
++              <div className="text-[10px] font-bold text-emerald-800">手绘地图</div>
++            </div>
++          );
++        }
++      case 'calendar':
++        if (size === '2x2') {
++          return (
++            <div key={id} className={wrapperClass("text-white flex flex-col justify-between p-3.5")} onClick={() => !isEditing && onNavigate('sports-assistant')}>
++              <DeleteButton />
++              <img src="https://images.unsplash.com/photo-1507371341162-763b5e419408?w=500&q=80" alt="autumn bg" className="absolute inset-0 w-full h-full object-cover" />
++              <div className="absolute inset-0 bg-black/40"></div>
++              <div className="relative z-10">
++                <div className="flex justify-between items-start">
++                  <div>
++                    <div className="text-xs opacity-90 drop-shadow">2026年04月</div>
++                    <div className="text-lg font-bold drop-shadow">农历三月初十</div>
++                  </div>
++                  <div className="text-4xl font-bold leading-none drop-shadow text-orange-400">26</div>
++                </div>
++                <div className="mt-4 bg-white/20 backdrop-blur-md rounded-xl p-2 border border-white/10">
++                  <div className="text-[10px] font-bold text-orange-200 mb-1">即将到来</div>
++                  <div className="text-xs">今晚拯救地球，有事DIDI</div>
++                </div>
++              </div>
++            </div>
++          );
++        } else if (size === '2x1') {
++          return (
++            <div key={id} className={wrapperClass("text-white flex flex-col justify-between p-2.5")} onClick={() => !isEditing && onNavigate('sports-assistant')}>
++              <DeleteButton />
++              <img src="https://images.unsplash.com/photo-1507371341162-763b5e419408?w=500&q=80" alt="autumn bg" className="absolute inset-0 w-full h-full object-cover" />
++              <div className="absolute inset-0 bg-black/20"></div>
++              <div className="relative z-10 flex justify-between items-start">
++                <div>
++                  <div className="text-[8px] opacity-90 drop-shadow">2026年04月</div>
++                  <div className="text-[8px] opacity-90 drop-shadow">丙午年</div>
++                  <div className="text-[10px] font-bold mt-0.5 drop-shadow">农历三月初十</div>
++                </div>
++                <div className="text-3xl font-bold leading-none drop-shadow">26</div>
++              </div>
++              <div className="relative z-10 flex items-center justify-between mt-1">
++                <div className="text-[11px] font-medium tracking-wider drop-shadow">😃今晚拯救地球，<br/>有事DIDI 📎</div>
++                <div className="w-6 h-6 bg-white/20 rounded-md backdrop-blur-sm flex items-center justify-center">
++                  <Calendar size={14} />
++                </div>
++              </div>
++            </div>
++          );
++        } else {
++          return (
++            <div key={id} className={wrapperClass("bg-orange-50 flex flex-col items-center justify-center p-2")} onClick={() => !isEditing && onNavigate('sports-assistant')}>
++              <DeleteButton />
++              <div className="text-xl font-bold text-orange-500 leading-none mb-1">26</div>
++              <div className="text-[9px] font-bold text-orange-800">日历</div>
++            </div>
++          );
++        }
++      case 'countdown':
++        if (size === '2x2') {
++          return (
++            <div key={id} className={wrapperClass("bg-gradient-to-br from-indigo-500 to-purple-500 text-white p-3 flex flex-col justify-between")}>
++              <DeleteButton />
++              <div className="flex items-center gap-1 opacity-90">
++                <Clock size={14} />
++                <span className="text-xs font-medium">下一次旅行</span>
++              </div>
++              <div className="text-center">
++                <div className="text-[10px] opacity-80 mb-1">距离 贵阳三日游 还有</div>
++                <div className="text-5xl font-bold tracking-tight">12<span className="text-sm font-normal ml-1">天</span></div>
++              </div>
++              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 text-xs flex justify-between items-center">
++                <span>机票已出，酒店待定</span>
++                <ChevronRight size={14} />
++              </div>
++            </div>
++          );
++        } else if (size === '2x1') {
++          return (
++            <div key={id} className={wrapperClass("bg-gradient-to-br from-indigo-500 to-purple-500 text-white p-3 flex items-center justify-between")}>
++              <DeleteButton />
++              <div>
++                <div className="text-[10px] opacity-80 mb-0.5">贵阳三日游</div>
++                <div className="text-xl font-bold">12天后出发</div>
++              </div>
++              <div className="bg-white/20 p-2 rounded-full">
++                <Clock size={20} />
++              </div>
++            </div>
++          );
++        } else {
++          return (
++            <div key={id} className={wrapperClass("bg-indigo-50 text-indigo-600 flex flex-col items-center justify-center p-2")}>
++              <DeleteButton />
++              <div className="text-xl font-bold mb-0.5">12<span className="text-[10px]">天</span></div>
++              <div className="text-[9px] font-medium">行程倒计时</div>
++            </div>
++          );
++        }
++
++      case 'traffic':
++        if (size === '2x2') {
++          return (
++            <div key={id} className={wrapperClass("bg-white text-gray-800 p-3 flex flex-col justify-between border border-gray-100")}>
++              <DeleteButton />
++              <div className="flex justify-between items-start">
++                <div className="flex items-center gap-1 text-blue-600">
++                  <Car size={14} />
++                  <span className="text-xs font-bold">实时路况</span>
++                </div>
++                <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">畅通</span>
++              </div>
++              <div className="flex-1 mt-2 relative rounded-lg overflow-hidden bg-gray-100">
++                <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=500&q=80" alt="map" className="absolute inset-0 w-full h-full object-cover opacity-50" />
++                <div className="absolute inset-0 flex items-center justify-center">
++                  <div className="bg-white/90 backdrop-blur-sm text-[10px] px-2 py-1 rounded shadow-sm font-medium text-gray-700">沪昆高速 畅通</div>
++                </div>
++              </div>
++            </div>
++          );
++        } else if (size === '2x1') {
++          return (
++            <div key={id} className={wrapperClass("bg-white text-gray-800 p-3 flex items-center justify-between border border-gray-100")}>
++              <DeleteButton />
++              <div>
++                <div className="flex items-center gap-1 mb-1">
++                  <Car size={14} className="text-blue-500" />
++                  <span className="text-xs font-bold">高速路况</span>
++                </div>
++                <div className="text-[10px] text-gray-500">前往黄果树全线畅通</div>
++              </div>
++              <div className="text-xl font-bold text-green-500">畅通</div>
++            </div>
++          );
++        } else {
++          return (
++            <div key={id} className={wrapperClass("bg-blue-50 text-blue-600 flex flex-col items-center justify-center p-2")}>
++              <DeleteButton />
++              <Car size={20} className="mb-1" />
++              <div className="text-[10px] font-bold">路况</div>
++            </div>
++          );
++        }
++
++      case 'coupon':
++        if (size === '2x2') {
++          return (
++            <div key={id} className={wrapperClass("bg-gradient-to-br from-orange-400 to-red-500 text-white p-3 flex flex-col justify-between")}>
++              <DeleteButton />
++              <div className="flex items-center gap-1 opacity-90">
++                <Ticket size={14} />
++                <span className="text-xs font-medium">每日特惠盲盒</span>
++              </div>
++              <div className="text-center">
++                <div className="text-4xl mb-1">🎁</div>
++                <div className="text-sm font-bold">点击抽取今日专属福利</div>
++              </div>
++              <button className="w-full bg-white text-red-500 text-xs font-bold py-1.5 rounded-lg shadow-sm">
++                立即抽取
++              </button>
++            </div>
++          );
++        } else if (size === '2x1') {
++          return (
++            <div key={id} className={wrapperClass("bg-gradient-to-r from-orange-400 to-red-500 text-white p-3 flex items-center justify-between")}>
++              <DeleteButton />
++              <div>
++                <div className="text-xs font-bold mb-0.5">每日特惠</div>
++                <div className="text-[10px] opacity-90">酸汤鱼50元代金券</div>
++              </div>
++              <div className="bg-white text-red-500 text-[10px] font-bold px-2 py-1 rounded shadow-sm">
++                去领取
++              </div>
++            </div>
++          );
++        } else {
++          return (
++            <div key={id} className={wrapperClass("bg-red-50 text-red-500 flex flex-col items-center justify-center p-2")}>
++              <DeleteButton />
++              <Ticket size={20} className="mb-1" />
++              <div className="text-[10px] font-bold">领券</div>
++            </div>
++          );
++        }
++
++      case 'footprint':
++        if (size === '2x2') {
++          return (
++            <div key={id} className={wrapperClass("relative bg-white overflow-hidden")} onClick={() => !isEditing && onNavigate('footprint')}>
++              <DeleteButton />
++              {/* Map Background */}
++              <div className="absolute inset-0 bg-[#F4F4F4]">
++                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=500&q=80" alt="map bg" className="w-full h-full object-cover opacity-30 grayscale" />
++              </div>
++              
++              <div className="relative z-10 p-2 flex flex-col h-full">
++                {/* Floating Stats Card */}
++                <div className="bg-white rounded-xl p-2 shadow-sm flex items-center justify-between">
++                  <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-100 shadow-sm flex-shrink-0">
++                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80" alt="avatar" className="w-full h-full object-cover" />
++                  </div>
++                  <div className="flex flex-1 justify-around text-center ml-2">
++                    <div className="flex flex-col">
++                      <span className="text-[14px] font-black text-gray-900 leading-none">66</span>
++                      <span className="text-[8px] text-gray-500 mt-0.5">地点</span>
++                    </div>
++                    <div className="flex flex-col">
++                      <span className="text-[14px] font-black text-gray-900 leading-none">234</span>
++                      <span className="text-[8px] text-gray-500 mt-0.5">照片</span>
++                    </div>
++                    <div className="flex flex-col">
++                      <span className="text-[14px] font-black text-gray-900 leading-none">8</span>
++                      <span className="text-[8px] text-gray-500 mt-0.5">收藏</span>
++                    </div>
++                  </div>
++                </div>
++                
++                {/* Bottom area */}
++                <div className="mt-auto flex justify-between items-end">
++                  <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm">
++                    <span className="text-[10px] font-bold text-gray-800">旅行足迹地图</span>
++                  </div>
++                  <div className="bg-[#FFE500] w-6 h-6 rounded-full flex items-center justify-center shadow-sm">
++                    <ChevronRight size={14} className="text-gray-900" />
++                  </div>
++                </div>
++              </div>
++            </div>
++          );
++        } else if (size === '2x1') {
++          return (
++            <div key={id} className={wrapperClass("bg-emerald-50 text-emerald-800 p-3 flex items-center justify-between")} onClick={() => !isEditing && onNavigate('footprint')}>
++              <DeleteButton />
++              <div>
++                <div className="text-xs font-bold mb-0.5">旅行足迹</div>
++                <div className="text-[10px] opacity-80 font-medium">已打卡 12 个城市</div>
++              </div>
++              <Footprints size={24} className="text-emerald-400" />
++            </div>
++          );
++        } else {
++          return (
++            <div key={id} className={wrapperClass("bg-emerald-50 text-emerald-600 flex flex-col items-center justify-center p-2")} onClick={() => !isEditing && onNavigate('footprint')}>
++              <DeleteButton />
++              <Footprints size={20} className="mb-1" />
++              <div className="text-[10px] font-bold">足迹</div>
++            </div>
++          );
++        }
++
++      default:
++        return null;
++    }
++  };
++
+   return (
+     <div className="h-full bg-gradient-to-b from-indigo-50 to-white flex flex-col relative overflow-hidden">
+       {/* 渐变背景层 */}
+@@ -130,7 +652,7 @@ export default function Home({ onNavigate }: { onNavigate: (page: Page, data?: a
+       <div className="absolute top-0 left-0 w-full h-[151px] bg-gradient-to-b from-[rgba(119,134,252,0.5)] via-[rgba(119,134,252,0.2)] to-[rgba(119,134,252,0)] pointer-events-none z-10" />
+       
+       {/* Header & Unified Notification */}
+-      <div className="pt-20 px-6 min-h-[100px] flex items-center relative z-50">
++      <div className="pt-12 px-5 min-h-[80px] flex items-center relative z-50">
+         <AnimatePresence mode="wait">
+           {!isTripExpanded ? (
+             <motion.div 
+@@ -142,24 +664,35 @@ export default function Home({ onNavigate }: { onNavigate: (page: Page, data?: a
+               transition={{ duration: 0.2 }}
+             >
+               <div data-guide="header" className="flex items-end gap-4">
+-                <div>
+-                  <h1 className="text-2xl font-bold text-gray-900">黄小西</h1>
+-                  <p className="text-sm text-gray-500">您的AI文旅助手</p>
++                <div className="flex gap-4 items-baseline">
++                  <button 
++                    className={`text-2xl font-bold transition-all ${mainTab === '发现' ? 'text-gray-900 scale-105 origin-bottom-left' : 'text-gray-400'}`}
++                    onClick={() => setMainTab('发现')}
++                  >
++                    发现
++                  </button>
++                  <button 
++                    className={`text-2xl font-bold transition-all ${mainTab === '智能体广场' ? 'text-gray-900 scale-105 origin-bottom-left' : 'text-gray-400'}`}
++                    onClick={() => setMainTab('智能体广场')}
++                  >
++                    广场
++                  </button>
+                 </div>
+-                <img src={`${import.meta.env.BASE_URL}IP_1.png`} alt="趴着的黄小西" className="w-24 h-18 object-contain scale-x-[-1]" />
+               </div>
+               
+-              <button
+-                data-guide="notification"
+-                onClick={() => setIsTripExpanded(true)}
+-                className="bg-white p-2 rounded-full shadow-sm flex items-center gap-2 relative"
+-              >
+-                <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-white">
+-                  <MapPin size={16} />
+-                </div>
+-                {/* Red dot indicator for notifications */}
+-                <div className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></div>
+-              </button>
++              {mainTab === '智能体广场' && (
++                <button
++                  data-guide="notification"
++                  onClick={() => setIsTripExpanded(true)}
++                  className="bg-white p-2 rounded-full shadow-sm flex items-center gap-2 relative"
++                >
++                  <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-white">
++                    <MapPin size={16} />
++                  </div>
++                  {/* Red dot indicator for notifications */}
++                  <div className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></div>
++                </button>
++              )}
+             </motion.div>
+           ) : (
+             <motion.div 
+@@ -307,152 +840,179 @@ export default function Home({ onNavigate }: { onNavigate: (page: Page, data?: a
+         </AnimatePresence>
+       </div>
+ 
+-      {/* Original Announcement & Translation */}
+-      <div data-guide="announcement" className="px-6 mt-8 flex gap-2 relative z-10">
+-        <div 
+-          onClick={() => onNavigate('announcement')}
+-          className="flex-1 bg-green-50 border border-green-100 rounded-full px-3 py-1.5 flex items-center justify-between overflow-hidden cursor-pointer"
+-        >
+-          <div className="flex items-center gap-2 text-green-700 text-xs w-full overflow-hidden">
+-            <Volume2 size={14} className="flex-shrink-0" />
+-            <div className="relative w-full overflow-hidden h-4">
+-              <motion.div 
+-                className="absolute whitespace-nowrap"
+-                animate={{ x: ['100%', '-100%'] }}
+-                transition={{ repeat: Infinity, duration: 10, ease: 'linear' }}
+-              >
+-                黄果树瀑布迎来最佳观赏期，水量充沛
+-              </motion.div>
++      {/* Main Content Area based on mainTab */}
++      {mainTab === '智能体广场' ? (
++        <div data-guide="agent-zone" className="flex flex-col flex-1">
++          {/* Original Announcement & Translation - Moved inside 智能体广场 */}
++          <div data-guide="announcement" className="px-6 mt-4 flex gap-2 relative z-10">
++            <div 
++              onClick={() => onNavigate('announcement')}
++              className="flex-1 bg-green-50 border border-green-100 rounded-full px-3 py-1.5 flex items-center justify-between overflow-hidden cursor-pointer"
++            >
++              <div className="flex items-center gap-2 text-green-700 text-xs w-full overflow-hidden">
++                <Volume2 size={14} className="flex-shrink-0" />
++                <div className="relative w-full overflow-hidden h-4">
++                  <motion.div 
++                    className="absolute whitespace-nowrap"
++                    animate={{ x: ['100%', '-100%'] }}
++                    transition={{ repeat: Infinity, duration: 10, ease: 'linear' }}
++                  >
++                    黄果树瀑布迎来最佳观赏期，水量充沛
++                  </motion.div>
++                </div>
++              </div>
++              <ChevronRight size={14} className="text-green-600 flex-shrink-0" />
+             </div>
++            <button 
++              onClick={(e) => {
++                e.stopPropagation();
++                onNavigate('translation');
++              }}
++              className="bg-green-50 border border-green-100 text-green-600 px-3 py-1.5 rounded-xl flex items-center justify-center flex-shrink-0"
++            >
++              <img src={`${import.meta.env.BASE_URL}icno/首页icon/中英.svg`} alt="翻译" className="w-6 h-6" />
++            </button>
+           </div>
+-          <ChevronRight size={14} className="text-green-600 flex-shrink-0" />
+-        </div>
+-        <button 
+-          onClick={(e) => {
+-            e.stopPropagation();
+-            onNavigate('translation');
+-          }}
+-          className="bg-green-50 border border-green-100 text-green-600 px-3 py-1.5 rounded-xl flex items-center justify-center flex-shrink-0"
+-        >
+-          <img src={`${import.meta.env.BASE_URL}icno/首页icon/中英.svg`} alt="翻译" className="w-6 h-6" />
+-        </button>
+-      </div>
+ 
+-      {/* Tabs + Cards Zone */}
+-      <div data-guide="agent-zone" className="flex flex-col flex-1">
+-      <div data-guide="tabs" className="flex px-6 mt-6 gap-6 overflow-x-auto scrollbar-hide pb-2 relative z-20 w-full">
+-        {TABS.map(tab => (
+-          <button 
+-            key={tab} 
+-            onClick={() => setActiveTab(tab)}
+-            className={`whitespace-nowrap flex-shrink-0 text-lg font-medium transition-colors ${
+-              activeTab === tab 
+-                ? 'text-[#7786FC]' 
+-                : 'text-gray-500 hover:text-gray-800'
+-            }`}
+-          >
+-            {tab}
+-          </button>
+-        ))}
+-      </div>
++          <div data-guide="tabs" className="flex px-6 mt-6 gap-6 overflow-x-auto scrollbar-hide pb-2 relative z-20 w-full">
++            {TABS.map(tab => (
++              <button 
++                key={tab} 
++                onClick={() => setActiveTab(tab)}
++                className={`whitespace-nowrap flex-shrink-0 text-lg font-medium transition-colors ${
++                  activeTab === tab 
++                    ? 'text-gray-900 font-bold' 
++                    : 'text-gray-400 hover:text-gray-600'
++                }`}
++              >
++                {tab}
++                {activeTab === tab && (
++                  <motion.div 
++                    layoutId="activeTabIndicator"
++                    className="h-1 w-1/2 bg-yellow-400 mx-auto mt-1 rounded-full" 
++                  />
++                )}
++              </button>
++            ))}
++          </div>
+ 
+-      {/* Card Stack */}
+-      <div data-guide="cards" className="flex-1 relative w-full px-6 flex justify-center items-center perspective-1000 z-10 my-0">
+-        <div className="relative w-full max-w-[320px] h-[360px]">
+-          <AnimatePresence mode="wait">
+-            {isInitialLoading ? (
+-              <motion.div 
+-                key="loading"
+-                initial={{ opacity: 0, scale: 0.9 }}
+-                animate={{ opacity: 1, scale: 1 }}
+-                exit={{ opacity: 0, scale: 0.9 }}
+-                className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-md rounded-[2rem] border border-white/60 shadow-sm z-50"
++          <div className="flex-1 overflow-hidden mt-4 relative z-10 w-full flex flex-col items-center">
++            {cards.length > 0 && (
++              <div className="relative w-full h-[380px] perspective-1000">
++                <AnimatePresence>
++                  {cards.slice(0, 3).map((card, index) => {
++                    const isTop = index === 0;
++                    return (
++                      <motion.div
++                        key={card.id}
++                        initial={false}
++                        animate={{
++                          scale: isTop ? 1 : 1 - index * 0.05,
++                          y: index * 15,
++                          zIndex: cards.length - index,
++                          opacity: 1 - index * 0.2
++                        }}
++                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
++                        className="absolute w-[85%] left-[7.5%] bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100"
++                        style={{ transformOrigin: "top center" }}
++                        drag={isTop ? "y" : false}
++                        dragConstraints={{ top: 0, bottom: 0 }}
++                        onDragEnd={(e, { offset, velocity }) => {
++                          const swipe = offset.y;
++                          if (swipe < -50 || swipe > 50) {
++                            handleSwipe();
++                          }
++                        }}
++                      >
++                        <div className="h-48 relative">
++                          <img src={card.img} alt={card.title} className="w-full h-full object-cover" />
++                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
++                          <div className="absolute top-3 left-3 bg-white/20 backdrop-blur px-2 py-1 rounded text-xs text-white">
++                            {card.tag}
++                          </div>
++                          <div className="absolute bottom-3 left-3 right-3 text-white">
++                            <h3 className="font-bold text-lg leading-tight">{card.title}</h3>
++                          </div>
++                        </div>
++                        <div className="p-4 bg-white">
++                          <p className="text-gray-500 text-sm mb-4 line-clamp-2">{card.desc}</p>
++                          <div className="flex items-center justify-between">
++                            <div className="flex items-center gap-1 text-gray-400">
++                              <Heart size={16} />
++                              <span className="text-sm">{card.likes}</span>
++                            </div>
++                            <button 
++                              onClick={() => onNavigate('chat', { 
++                                query: card.suggestedQuestion,
++                                agentTitle: card.shortName
++                              })}
++                              className="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-transform whitespace-nowrap flex-shrink-0"
++                            >
++                              <Sparkles size={14} className="flex-shrink-0" />
++                              咨询 TA
++                            </button>
++                          </div>
++                        </div>
++                      </motion.div>
++                    );
++                  })}
++                </AnimatePresence>
++              </div>
++            )}
++            <div className="mt-4 text-gray-400 text-sm animate-pulse">上下滑动切换智能体</div>
++          </div>
++        </div>
++      ) : (
++        <div className="flex-1 overflow-y-auto px-4 pb-24 z-10 space-y-6">
++          {/* Bento Grid User Widgets Area */}
++          <div>
++            <div className="flex justify-end items-center mb-3">
++              <button 
++                onClick={() => setIsEditingPage(!isEditingPage)}
++                className={`text-xs font-medium flex items-center gap-1 px-2 py-1 rounded-full transition-colors ${isEditingPage ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:text-gray-700'}`}
+               >
+-                <img src={`${import.meta.env.BASE_URL}IP_1.png`} alt="黄小西招手" className="w-28 h-28 object-contain animate-bounce mb-4 drop-shadow-lg" />
+-                <div className="flex items-center gap-2 text-[#7786FC] font-bold text-lg tracking-wide">
+-                  <div className="w-5 h-5 rounded-full border-[3px] border-[#7786FC] border-t-transparent animate-spin" />
+-                  黄小西正在赶来...
+-                </div>
+-                <p className="text-xs text-[#7786FC]/70 mt-2 font-medium">为您打包贵州的美景与智能体 (´･ω･`)</p>
+-              </motion.div>
+-            ) : cards.length === 0 ? (
+-              <motion.div 
+-                key="empty"
+-                initial={{ opacity: 0, scale: 0.9 }}
+-                animate={{ opacity: 1, scale: 1 }}
+-                exit={{ opacity: 0, scale: 0.9 }}
+-                className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-md rounded-[2rem] border border-white/60 shadow-sm z-50"
++                {isEditingPage ? '完成' : '编辑'} <ChevronRight size={14} />
++              </button>
++            </div>
++            
++            <div className="grid grid-cols-4 gap-3">
++              {activeWidgets.map(widgetId => renderWidget(widgetId))}
++
++              {/* Add Widget Button */}
++              {isEditingPage && (
++                <div 
++                  onClick={() => setShowWidgetSelector(true)}
++                  className="col-span-1 row-span-1 bg-white border border-dashed border-gray-300 rounded-2xl p-2 flex flex-col items-center justify-center gap-1 cursor-pointer active:scale-95 transition-transform text-gray-400 hover:text-gray-600 hover:bg-gray-50 min-h-[70px]"
++                >
++                  <Plus size={20} />
++                  <span className="text-[10px]">添加组件</span>
++                </div>
++              )}
++            </div>
++          </div>
++
++          {/* New Sections Area */}
++          <div className="space-y-6 relative">
++            {activeContentModules.map(moduleType => renderContentModule(moduleType))}
++            
++            {isEditingPage && (
++              <div 
++                onClick={() => setShowContentModuleSelector(true)}
++                className="w-full bg-white border border-dashed border-gray-300 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer active:scale-95 transition-transform text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+               >
+-                <motion.img 
+-                  src={`${import.meta.env.BASE_URL}张手跑.png`} 
+-                  alt="敬请期待" 
+-                  className="w-28 h-28 object-contain opacity-90 mb-4 drop-shadow-md"
+-                  animate={{ y: [0, -8, 0] }}
+-                  transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+-                />
+-                <div className="text-[#7786FC] font-bold text-xl tracking-widest mb-2">
+-                  敬请期待
+-                </div>
+-                <p className="text-xs text-[#7786FC]/80 font-medium text-center px-6 leading-relaxed">
+-                  黄小西正在努力打包更多智能体<br/>马上就来哦 (๑•̀ㅂ•́)و✧
+-                </p>
+-              </motion.div>
+-            ) : (
+-              <AnimatePresence mode="popLayout">
+-                {cards.map((card, index) => {
+-                  const isTop = index === 0;
+-                  return (
+-                    <motion.div
+-                      key={card.id}
+-                      className="absolute inset-0 rounded-[2rem] overflow-hidden shadow-xl bg-white cursor-grab active:cursor-grabbing"
+-                    style={{
+-                      zIndex: cards.length - index,
+-                    }}
+-                    initial={{ scale: 0.8, opacity: 0, y: 50, x: 0 }}
+-                    animate={{
+-                      scale: 1 - index * 0.06,
+-                      y: index * 16,
+-                      x: 0,
+-                      opacity: index === 0 ? 1 : Math.max(0, 1 - index * 0.4),
+-                    }}
+-                    exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+-                    drag={isTop ? "x" : false}
+-                    dragConstraints={{ left: 0, right: 0 }}
+-                    dragElastic={0.7}
+-                    onDragEnd={(e, info) => {
+-                      if (Math.abs(info.offset.x) > 100 || Math.abs(info.velocity.x) > 500) {
+-                        handleSwipe();
+-                      }
+-                    }}
+-                    onClick={() => {
+-                      if (isTop) {
+-                        onNavigate('chat', { agentTitle: card.title });
+-                      }
+-                    }}
+-                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+-                  >
+-                    <img src={card.img} alt={card.title} className="w-full h-full object-cover pointer-events-none" />
+-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white pointer-events-none">
+-                      <h2 className="text-xl font-bold mb-2">{card.title}</h2>
+-                      <p className="text-xs text-white/80 line-clamp-2 mb-4">{card.desc}</p>
+-                      <div className="flex">
+-                        <span className="bg-white/20 backdrop-blur-md border border-white/30 px-3 py-1 rounded-full text-xs flex items-center gap-1">
+-                          <MapPin size={12} /> {card.tag}
+-                        </span>
+-                      </div>
+-                    </div>
+-                  </motion.div>
+-                );
+-              })}
+-              </AnimatePresence>
++                <div className="bg-gray-100 p-2 rounded-full">
++                  <Plus size={20} />
++                </div>
++                <span className="text-sm font-medium">添加内容模块</span>
++              </div>
+             )}
+-          </AnimatePresence>
++          </div>
+         </div>
+-      </div>
+-      </div>
++        </div>
++      )}
+ 
+       {/* Suggested Question */}
+-      {cards.length > 0 && !isInitialLoading && (
++      {mainTab === '智能体广场' && cards.length > 0 && !isInitialLoading && (
+         <div className="px-6 mb-2 relative z-20">
+           <AnimatePresence mode="wait">
+             <motion.div
+@@ -474,18 +1034,20 @@ export default function Home({ onNavigate }: { onNavigate: (page: Page, data?: a
+       )}
+ 
+       {/* Bottom Input */}
+-      <div className="px-6 pb-8 mt-auto relative z-20">
+-        <div
+-          data-guide="input"
+-          onClick={() => setIsTaskSquareOpen(true)}
+-          className="bg-white shadow-lg rounded-full p-2 pl-6 flex items-center justify-between border border-gray-100 cursor-text"
+-        >
+-          <span className="text-gray-400 text-sm">给黄小西布置一个任务</span>
+-          <button className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
+-            <Send size={18} />
+-          </button>
++      {mainTab === '智能体广场' && (
++        <div className="px-6 pb-8 mt-auto relative z-20">
++          <div
++            data-guide="input"
++            onClick={() => setIsTaskSquareOpen(true)}
++            className="bg-white shadow-lg rounded-full p-2 pl-6 flex items-center justify-between border border-gray-100 cursor-text"
++          >
++            <span className="text-gray-400 text-sm">给黄小西布置一个任务</span>
++            <button className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
++              <Send size={18} />
++            </button>
++          </div>
+         </div>
+-      </div>
++      )}
+ 
+       {/* Task Square Bottom Sheet */}
+       <AnimatePresence>
+@@ -512,8 +1074,10 @@ export default function Home({ onNavigate }: { onNavigate: (page: Page, data?: a
+                     key={i}
+                     onClick={() => {
+                       setIsTaskSquareOpen(false);
+-                      if (task.title === '查赛事') {
++                      if (task.title === '查活动') {
+                         onNavigate('sports-assistant');
++                      } else if (task.title === '看地图') {
++                        onNavigate('map-explore');
+                       } else {
+                         onNavigate('chat', { query: task.query });
+                       }
+@@ -565,6 +1129,341 @@ export default function Home({ onNavigate }: { onNavigate: (page: Page, data?: a
+           </motion.div>
+         )}
+       </AnimatePresence>
++
++      {/* Widget Selector Modal */}
++      <AnimatePresence>
++        {showWidgetSelector && (
++          <motion.div
++            className="absolute inset-0 z-[70] flex flex-col justify-end"
++            initial={{ opacity: 0 }}
++            animate={{ opacity: 1 }}
++            exit={{ opacity: 0 }}
++          >
++            <div className="absolute inset-0 bg-black/40" onClick={() => setShowWidgetSelector(false)} />
++            <motion.div
++              className="relative bg-gray-50 rounded-t-[2rem] px-6 pt-5 pb-8 h-[80%] flex flex-col"
++              initial={{ y: '100%' }}
++              animate={{ y: 0 }}
++              exit={{ y: '100%' }}
++              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
++            >
++              <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4 flex-shrink-0" />
++              <div className="flex justify-between items-center mb-5 flex-shrink-0">
++                <h3 className="text-lg font-bold text-gray-900">添加工具箱组件</h3>
++                <button onClick={() => setShowWidgetSelector(false)} className="text-gray-400 hover:text-gray-600 bg-gray-200/50 p-1.5 rounded-full">
++                  <X size={18} />
++                </button>
++              </div>
++              
++              <div className="flex-1 overflow-y-auto scrollbar-hide space-y-6 pb-6">
++                {/* 2x2 Widgets */}
++                <div>
++                  <h4 className="text-xs font-bold text-gray-500 mb-3 flex items-center gap-1">大尺寸组件 (2x2)</h4>
++                  <div className="grid grid-cols-2 gap-3">
++                    {AVAILABLE_WIDGETS.filter(w => w.size === '2x2').map(widget => {
++                      const isAdded = activeWidgets.includes(widget.id);
++                      return (
++                        <div 
++                          key={widget.id} 
++                          className={`relative bg-white rounded-2xl p-3 border-2 transition-all ${isAdded ? 'border-indigo-500 opacity-50' : 'border-transparent shadow-sm cursor-pointer hover:border-indigo-300'}`}
++                          onClick={() => !isAdded && addWidget(widget.id)}
++                        >
++                          <div className="flex justify-between items-start mb-2">
++                            <div className="bg-gray-50 p-1.5 rounded-lg">{widget.icon}</div>
++                            {isAdded ? (
++                              <span className="text-[10px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded font-bold">已添加</span>
++                            ) : (
++                              <Plus size={16} className="text-indigo-500" />
++                            )}
++                          </div>
++                          <div className="text-sm font-bold text-gray-800">{widget.title}</div>
++                        </div>
++                      );
++                    })}
++                  </div>
++                </div>
++
++                {/* 2x1 Widgets */}
++                <div>
++                  <h4 className="text-xs font-bold text-gray-500 mb-3 flex items-center gap-1">中尺寸组件 (2x1)</h4>
++                  <div className="grid grid-cols-1 gap-3">
++                    {AVAILABLE_WIDGETS.filter(w => w.size === '2x1').map(widget => {
++                      const isAdded = activeWidgets.includes(widget.id);
++                      return (
++                        <div 
++                          key={widget.id} 
++                          className={`relative bg-white rounded-2xl p-3 border-2 transition-all flex items-center justify-between ${isAdded ? 'border-indigo-500 opacity-50' : 'border-transparent shadow-sm cursor-pointer hover:border-indigo-300'}`}
++                          onClick={() => !isAdded && addWidget(widget.id)}
++                        >
++                          <div className="flex items-center gap-3">
++                            <div className="bg-gray-50 p-1.5 rounded-lg">{widget.icon}</div>
++                            <div className="text-sm font-bold text-gray-800">{widget.title}</div>
++                          </div>
++                          {isAdded ? (
++                            <span className="text-[10px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded font-bold">已添加</span>
++                          ) : (
++                            <div className="bg-indigo-50 p-1 rounded-full"><Plus size={16} className="text-indigo-500" /></div>
++                          )}
++                        </div>
++                      );
++                    })}
++                  </div>
++                </div>
++
++                {/* 1x1 Widgets */}
++                <div>
++                  <h4 className="text-xs font-bold text-gray-500 mb-3 flex items-center gap-1">小尺寸组件 (1x1)</h4>
++                  <div className="grid grid-cols-4 gap-3">
++                    {AVAILABLE_WIDGETS.filter(w => w.size === '1x1').map(widget => {
++                      const isAdded = activeWidgets.includes(widget.id);
++                    
++  const removeContentModule = (id: ContentModuleType) => {
++    setActiveContentModules(prev => prev.filter(m => m !== id));
++  };
++
++  const addContentModule = (id: ContentModuleType) => {
++    if (!activeContentModules.includes(id)) {
++      setActiveContentModules(prev => [...prev, id]);
++    }
++    setShowContentModuleSelector(false);
++  };
++
++  const renderContentModule = (id: ContentModuleType) => {
++    const isEditing = isEditingPage;
++    
++    const Wrapper = ({ children }: { children: React.ReactNode }) => (
++      <div className={`relative ${isEditing ? 'border-2 border-dashed border-indigo-400 p-2 rounded-2xl animate-[jiggle_0.3s_ease-in-out_infinite]' : ''}`}>
++        {isEditing && (
++          <button 
++            onClick={(e) => { e.stopPropagation(); removeContentModule(id); }}
++            className="absolute -top-2 -right-2 z-50 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
++          >
++            <Trash2 size={14} />
++          </button>
++        )}
++        <div className={isEditing ? 'pointer-events-none opacity-80' : ''}>
++          {children}
++        </div>
++      </div>
++    );
++
++    switch(id) {
++      case 'recommend':
++        return <Wrapper key="recommend"><div>
++              <div className="flex items-center gap-2 mb-3">
++                <h2 className="text-[18px] font-bold text-gray-900 whitespace-nowrap flex-shrink-0">好aoao好玩'ツ</h2>
++                <div className="text-[12px] font-normal text-gray-500 flex items-center gap-1 whitespace-nowrap flex-shrink-0">
++                  ×
++                  <div className="bg-[#3370FF] text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
++                    <Navigation size={10} className="flex-shrink-0" />
++                    高德地图
++                  </div>
++                </div></Wrapper>;
++      case 'weekend':
++        return <Wrapper key="weekend"><div className="w-full bg-gradient-to-r from-[#F0F5FF] to-[#E6EFFF] rounded-2xl p-3 shadow-sm border border-[#D6E4FF]">
++                <div className="flex items-center justify-between mb-3">
++                  <div className="flex items-center gap-2">
++                    <span className="text-[14px] font-black text-gray-900 italic tracking-wide">贵阳扫街榜</span>
++                  </div>
++                  <div className="text-[10px] text-gray-500 flex items-center gap-0.5 bg-white/60 px-1.5 py-0.5 rounded-full">
++                    <span>发现附近好街</span>
++                    <ChevronRight size={10} />
++                  </div>
++                </div>
++                <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
++                  {/* Item 1 */}
++                  <div className="w-[110px] flex-shrink-0 bg-white rounded-xl p-1.5 shadow-sm relative">
++                    <div className="absolute -top-1.5 -left-1.5 bg-gradient-to-br from-[#FFD700] to-[#F7931A] text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow-sm z-10 border-2 border-white">1</div>
++                    <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&q=80" className="w-full h-[56px] rounded-lg object-cover mb-1.5" />
++                    <div className="text-[12px] font-bold text-gray-900 truncate px-0.5">太平路</div>
++                    <div className="text-[9px] text-gray-500 truncate px-0.5 mt-0.5">潮人聚集地 · 2.1km</div>
++                  </div>
++                  {/* Item 2 */}
++                  <div className="w-[110px] flex-shrink-0 bg-white rounded-xl p-1.5 shadow-sm relative">
++                    <div className="absolute -top-1.5 -left-1.5 bg-gradient-to-br from-[#C0C0C0] to-[#999999] text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow-sm z-10 border-2 border-white">2</div>
++                    <img src="https://images.unsplash.com/photo-1574169208507-84376144848b?w=200&q=80" className="w-full h-[56px] rounded-lg object-cover mb-1.5" />
++                    <div className="text-[12px] font-bold text-gray-900 truncate px-0.5">青云市集</div>
++                    <div className="text-[9px] text-gray-500 truncate px-0.5 mt-0.5">夜市小吃 · 3.5km</div>
++                  </div>
++                  {/* Item 3 */}
++                  <div className="w-[110px] flex-shrink-0 bg-white rounded-xl p-1.5 shadow-sm relative">
++                    <div className="absolute -top-1.5 -left-1.5 bg-gradient-to-br from-[#CD7F32] to-[#A0522D] text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow-sm z-10 border-2 border-white">3</div>
++                    <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=200&q=80" className="w-full h-[56px] rounded-lg object-cover mb-1.5" />
++                    <div className="text-[12px] font-bold text-gray-900 truncate px-0.5">曹状元街</div>
++                    <div className="text-[9px] text-gray-500 truncate px-0.5 mt-0.5">老贵阳风味 · 4.2km</div>
++                  </div>
++                </div>
++              </div>
++            </div>
++
++            {/* Section 2: Hiiiiii玩周末 */}
++            <div>
++              <div className="flex items-center justify-between mb-3">
++                <h2 className="text-[18px] font-bold text-gray-900 flex-shrink-0 whitespace-nowrap">Hiiiiii玩周末 👀</h2>
++                <div className="text-[10px] text-purple-600 bg-purple-50 px-2 py-1 rounded-full flex items-center gap-1 border border-purple-100 font-bold flex-shrink-0 whitespace-nowrap">
++                  <Bot size={12} className="flex-shrink-0" />
++                  AI 周末计划生成
++                </div>
++              </div></Wrapper>;
++      case 'masonry':
++        return <Wrapper key="masonry"><div>
++              <h2 className="text-[18px] font-bold text-gray-900 mb-3">来都来lie，看一哈 🙄</h2>
++              
++              {/* 瀑布流筛选项 */}
++              <div className="flex gap-2 overflow-x-auto scrollbar-hide w-full pr-4 mb-4">
++                {MASONRY_FILTERS.map(filter => {
++                  const isActive = activeMasonryFilter === filter.name;
++                  return (
++                    <button
++                      key={filter.name}
++                      onClick={() => setActiveMasonryFilter(filter.name)}
++                      className={`relative whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium transition-colors z-10 flex items-center gap-1 flex-shrink-0 ${
++                        filter.isHot
++                          ? isActive
++                            ? 'text-white bg-gradient-to-r from-red-500 to-orange-500 font-bold border-none shadow-sm'
++                            : 'text-red-600 bg-red-50 hover:bg-red-100 border border-red-100'
++                          : isActive
++                            ? 'text-gray-900 font-bold bg-[#FFE500]'
++                            : 'text-gray-500 bg-gray-50 hover:bg-gray-100'
++                      }`}
++                    >
++                      {filter.isHot && <Flame size={12} className={isActive ? 'text-yellow-200' : 'text-red-500'} />}
++                      <span className="relative z-20">{filter.name}</span>
++                    </button>
++                  );
++                })}
++              </div>
++
++              <div className="flex gap-3">
++              {/* Col 1 */}
++              <div className="flex-1 flex flex-col gap-3">
++                {/* Card 1: 肇兴侗寨 */}
++                <div className="bg-white rounded-[20px] overflow-hidden shadow-sm pb-3">
++                  <div className="w-full h-56 relative">
++                    <img src={`${import.meta.env.BASE_URL}图片/miao.png`} alt="肇兴侗寨" className="w-full h-full object-cover" />
++                  </div>
++                  <div className="px-2.5 pt-2">
++                    <h3 className="font-bold text-[13px] text-gray-900 leading-snug line-clamp-2">肇兴侗寨避坑指南，这几家酸汤牛肉绝了！</h3>
++                    <div className="mt-2.5 flex justify-between items-center">
++                      <div className="flex items-center gap-1.5 min-w-0">
++                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80" alt="author" className="w-[18px] h-[18px] rounded-full object-cover flex-shrink-0" referrerPolicy="no-referrer" />
++                        <span className="text-[11px] text-gray-500 font-medium truncate">旅行达人小A</span>
++                      </div>
++                      <div className="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 shadow-sm cursor-pointer hover:bg-blue-100 transition-colors flex-shrink-0 whitespace-nowrap">
++                        <Sparkles size={10} className="text-blue-500 flex-shrink-0" />
++                        <span className="text-[10px] font-bold">咨询AI</span>
++                      </div>
++                    </div>
++                  </div>
++                </div></Wrapper>;
++      case 'banner':
++        return (
++          <Wrapper key="banner">
++            <div>
++              <div className="flex items-center justify-between mb-3">
++                <h2 className="text-[18px] font-bold text-gray-900 flex-shrink-0 whitespace-nowrap">运营活动横幅</h2>
++              </div>
++              <div className="w-full h-32 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center text-white shadow-sm overflow-hidden relative">
++                <img src="https://images.unsplash.com/photo-1540206351-d6465b3ac5c1?w=800&q=80" className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay" />
++                <div className="relative z-10 text-center">
++                  <div className="font-black text-2xl tracking-wider mb-1">五一狂欢节</div>
++                  <div className="text-xs opacity-90">限时门票买一送一</div>
++                </div>
++              </div>
++            </div>
++          </Wrapper>
++        );
++      case 'topic':
++        return (
++          <Wrapper key="topic">
++            <div>
++              <div className="flex items-center justify-between mb-3">
++                <h2 className="text-[18px] font-bold text-gray-900 flex-shrink-0 whitespace-nowrap">热门话题榜</h2>
++                <div className="text-[10px] text-gray-500 flex items-center gap-0.5 bg-white/60 px-1.5 py-0.5 rounded-full">
++                  <span>查看全部</span>
++                  <ChevronRight size={10} />
++                </div>
++              </div>
++              <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col gap-3">
++                <div className="flex items-center justify-between">
++                  <div className="flex items-center gap-2">
++                    <span className="text-red-500 font-black italic">1</span>
++                    <span className="text-[13px] font-bold text-gray-900">#贵阳路边音乐会#</span>
++                  </div>
++                  <span className="text-[10px] text-gray-400">12.5w 讨论</span>
++                </div>
++                <div className="flex items-center justify-between">
++                  <div className="flex items-center gap-2">
++                    <span className="text-orange-500 font-black italic">2</span>
++                    <span className="text-[13px] font-bold text-gray-900">#黄果树瀑布水量#</span>
++                  </div>
++                  <span className="text-[10px] text-gray-400">8.2w 讨论</span>
++                </div>
++                <div className="flex items-center justify-between">
++                  <div className="flex items-center gap-2">
++                    <span className="text-yellow-500 font-black italic">3</span>
++                    <span className="text-[13px] font-bold text-gray-900">#村超门票怎么抢#</span>
++                  </div>
++                  <span className="text-[10px] text-gray-400">5.6w 讨论</span>
++                </div>
++              </div>
++            </div>
++          </Wrapper>
++        );
++      case 'live':
++        return (
++          <Wrapper key="live">
++            <div>
++              <div className="flex items-center justify-between mb-3">
++                <h2 className="text-[18px] font-bold text-gray-900 flex-shrink-0 whitespace-nowrap">景区慢直播</h2>
++                <div className="text-[10px] text-red-500 bg-red-50 px-2 py-1 rounded-full flex items-center gap-1 border border-red-100 font-bold flex-shrink-0 whitespace-nowrap">
++                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
++                  LIVE
++                </div>
++              </div>
++              <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 relative">
++                <div className="w-full h-40 relative">
++                  <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80" className="w-full h-full object-cover" />
++                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
++                    <div className="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white">
++                      <Play size={20} className="ml-1" />
++                    </div>
++                  </div>
++                  <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md font-medium z-10 flex items-center gap-1">
++                    <MapPin size={10} /> 梵净山红云金顶
++                  </div>
++                  <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-md font-medium z-10">
++                    1.2w 人正在观看
++                  </div>
++                </div>
++              </div>
++            </div>
++          </Wrapper>
++        );
++      default:
++        return null;
++    }
++  };
++
++  return (
++                        <div 
++                          key={widget.id} 
++                          className={`relative bg-white rounded-2xl p-2 flex flex-col items-center justify-center border-2 transition-all aspect-square ${isAdded ? 'border-indigo-500 opacity-50' : 'border-transparent shadow-sm cursor-pointer hover:border-indigo-300'}`}
++                          onClick={() => !isAdded && addWidget(widget.id)}
++                        >
++                          <div className="bg-gray-50 p-1.5 rounded-full mb-1">{widget.icon}</div>
++                          <div className="text-[10px] font-bold text-gray-800 text-center leading-tight">{widget.title}</div>
++                          {isAdded && <div className="absolute top-1 right-1 w-2 h-2 bg-indigo-500 rounded-full" />}
++                        </div>
++                      );
++                    })}
++                  </div>
++                </div>
++              </div>
++            </motion.div>
++          </motion.div>
++        )}
++      </AnimatePresence>
+     </div>
+   );
+ }

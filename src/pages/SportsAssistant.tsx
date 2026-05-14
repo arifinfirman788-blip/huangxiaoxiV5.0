@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, Menu, MoreHorizontal, Minus, CircleDot, Sparkles, Send, Radio, Calendar, MapPin, Trophy, Shield, Star, HeartHandshake, Map, Coffee, Activity, Bed, Bus, Ticket } from 'lucide-react';
+import { ChevronLeft, Menu, MoreHorizontal, Minus, CircleDot, Sparkles, Send, Radio, Calendar, MapPin, Trophy, Shield, Star, HeartHandshake, Map, Coffee, Activity, Bed, Bus, Ticket, Image as ImageIcon, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Page } from '../types';
 
@@ -81,7 +81,7 @@ const MessageBubble = ({
           {msg.cards.map((card, i) => (
             <div key={i} className="flex-shrink-0 w-36 bg-white rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-gray-100">
               <div className="relative h-20">
-                <img src={card.img} className="w-full h-full object-cover" alt={card.title} />
+                <img src={card.img} className="w-full h-full object-cover" alt={card.title} referrerPolicy="no-referrer" />
                 <div className="absolute top-1 left-1 bg-black/60 backdrop-blur-sm text-white text-[10px] px-1.5 py-0.5 rounded font-bold">
                   {card.category}
                 </div>
@@ -107,7 +107,7 @@ const MessageBubble = ({
                 {group.cards.map((card, i) => (
                   <div key={i} className="flex-shrink-0 w-36 bg-white rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-gray-100">
                     <div className="relative h-20">
-                      <img src={card.img} className="w-full h-full object-cover" alt={card.title} />
+                      <img src={card.img} className="w-full h-full object-cover" alt={card.title} referrerPolicy="no-referrer" />
                       <div className="absolute top-1 left-1 bg-black/60 backdrop-blur-sm text-white text-[10px] px-1.5 py-0.5 rounded font-bold">
                         {card.category}
                       </div>
@@ -293,45 +293,73 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
       title: "2026贵阳马拉松",
       date: "2026.05.16",
       location: "贵阳市观山湖区",
-      img: `${import.meta.env.BASE_URL}图片/旅行记录.jpg`,
+      img: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&q=80",
       tag: "火热报名中",
       type: "marathon",
       status: "报名中",
+      actionConfig: { text: "我要报名", primary: true, intent: "报名参加" },
       organizer: "贵阳市体育局",
       route: "观山湖公园(起点) - 林城东路 - 黔灵山路 - 观山湖公园(终点)",
       level: "中国田协 A1 赛事",
       startDay: 15,
-      endDay: 16
+      endDay: 16,
+      gallery: [
+        { url: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=500&q=80", desc: "起跑瞬间" },
+        { url: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=500&q=80", desc: "途经风景" },
+        { url: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&q=80", desc: "完赛喜悦" },
+        { url: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&q=80", desc: "赛道冲刺" },
+        { url: "https://images.unsplash.com/photo-1502224562085-639556652f33?w=500&q=80", desc: "民俗加油站" },
+        { url: "https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=500&q=80", desc: "颁奖典礼" }
+      ]
     },
     {
       id: 2,
       title: "2026黄小西吃晚饭音乐节",
       date: "2026.05.01 - 05.03",
       location: "贵阳市观山湖公园",
-      img: `${import.meta.env.BASE_URL}图片/行程-首页背景.jpg`,
+      img: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&q=80",
       tag: "火热售票中",
       type: "music",
       status: "即将开始",
+      actionConfig: { text: "立即购票", primary: true, intent: "购买门票" },
       organizer: "贵州省文旅厅",
       route: "观山湖公园大草坪 (黄果树舞台/小七孔舞台)",
       level: "大型户外文旅音乐节",
       startDay: 1,
-      endDay: 3
+      endDay: 3,
+      gallery: [
+        { url: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=500&q=80", desc: "万人大合唱" },
+        { url: "https://images.unsplash.com/photo-1540039155733-d6f1c348d428?w=500&q=80", desc: "震撼舞美" },
+        { url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&q=80", desc: "乐迷现场" },
+        { url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&q=80", desc: "创意市集" },
+        { url: "https://images.unsplash.com/photo-1533174000273-e18f4a138096?w=500&q=80", desc: "星空露营" },
+        { url: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=500&q=80", desc: "烟花落幕" }
+      ]
     },
     {
       id: 3,
       title: "2026贵州榕江“村超”联赛",
       date: "2026.05 - 07 (每周末)",
       location: "黔东南州榕江县",
-      img: `${import.meta.env.BASE_URL}图片/西江2.jpg`,
+      img: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80",
       tag: "超级周末",
       type: "series",
       status: "进行中",
+      actionConfig: { text: "预约观赛", primary: true, intent: "预约观赛" },
       organizer: "榕江县人民政府",
       route: "榕江县城北新区体育馆",
       level: "现象级乡村体育赛事",
       startDay: 1,
       endDay: 31,
+      daysOfWeek: [0, 6], // 0是周日，6是周六
+      gallery: [
+        { url: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=500&q=80", desc: "万人座无虚席" },
+        { url: "https://images.unsplash.com/photo-1518605368461-1e1e38ce8f48?w=500&q=80", desc: "中场多耶舞" },
+        { url: "https://images.unsplash.com/photo-1511886929837-354d827aae26?w=500&q=80", desc: "倒挂金钩" },
+        { url: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=500&q=80", desc: "民俗大巡游" },
+        { url: "https://images.unsplash.com/photo-1508344928928-7137b29de216?w=500&q=80", desc: "颁发活猪奖品" },
+        { url: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=500&q=80", desc: "热情啦啦队" }
+      ],
       schedule: [
         {
           date: "5月16日 (超级星期六)",
@@ -350,16 +378,44 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
             { id: 7, time: "19:00", teamA: "小腮村队", teamB: "口寨村队", type: "match" }
           ]
         }
+      ],
+      fullSchedule: [
+        {
+          phase: "小组赛 第一轮 (已结束)",
+          matches: [
+            { id: 101, date: "5月2日", time: "14:00", teamA: "车江一村", teamB: "党相村队", score: "3 - 1", status: "finished" },
+            { id: 102, date: "5月2日", time: "16:00", teamA: "平地村队", teamB: "小腮村队", score: "2 - 2", status: "finished" },
+            { id: 103, date: "5月3日", time: "15:00", teamA: "新中村队", teamB: "月寨村队", score: "0 - 1", status: "finished" }
+          ]
+        },
+        {
+          phase: "小组赛 第二轮 (进行中)",
+          matches: [
+            { id: 104, date: "5月16日", time: "14:00", teamA: "车江一村", teamB: "忠诚村队", status: "upcoming" },
+            { id: 105, date: "5月16日", time: "16:00", teamA: "平地村队", teamB: "丰乐村队", status: "upcoming" },
+            { id: 106, date: "5月17日", time: "15:00", teamA: "月寨村队", teamB: "党相村队", status: "upcoming" }
+          ]
+        },
+        {
+          phase: "淘汰赛 (待定)",
+          matches: [
+            { id: 107, date: "6月13日", time: "15:00", teamA: "A组第一", teamB: "B组第二", status: "tbd" },
+            { id: 108, date: "6月13日", time: "19:00", teamA: "B组第一", teamB: "A组第二", status: "tbd" },
+            { id: 109, date: "6月20日", time: "19:00", teamA: "半决赛胜者", teamB: "半决赛胜者", status: "tbd", isFinal: true }
+          ]
+        }
       ]
     }
   ];
 
   const [selectedDate, setSelectedDate] = useState(16);
   const [eventTab, setEventTab] = useState<string>('pre');
+  const [showFullSchedule, setShowFullSchedule] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (activeSubPage?.type === 'event') {
-      setEventTab(activeSubPage.data.type === 'series' ? 'schedule' : 'pre');
+      setEventTab('ticket');
     }
   }, [activeSubPage]);
 
@@ -414,7 +470,7 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
             
             <h2 className="text-[17px] font-extrabold text-[#2C3E50] flex items-center gap-1.5">
               <Sparkles size={16} className="text-blue-500" />
-              赛事管家
+              活动管家
             </h2>
             <p className="text-[13px] text-[#5C6B7A] mt-1 font-medium">活动赛事智能体，定制您的参赛与观演体验</p>
           </div>
@@ -443,7 +499,7 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                             className="flex-shrink-0 w-[200px] bg-white/90 backdrop-blur-md rounded-xl overflow-hidden shadow-sm border border-white/60 cursor-pointer active:scale-95 transition-transform"
                           >
                             <div className="h-24 w-full relative">
-                              <img src={event.img} className="w-full h-full object-cover" alt={event.title} />
+                              <img src={event.img} className="w-full h-full object-cover" alt={event.title} referrerPolicy="no-referrer" />
                               <div className="absolute top-2 right-2 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-sm font-medium">
                                 {event.tag}
                               </div>
@@ -569,15 +625,36 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                     </div>
                     {/* Dates Grid (Mock for May 2026) */}
                     <div className="grid grid-cols-7 gap-y-2 gap-x-1">
+                      {/* 2026-05-01 是周五(5)，所以在日历前面补上 5 个空白格，由于日历表头第一列是周日(0)，1到4对应一二三四 */}
+                      {Array.from({length: 5}).map((_, i) => (
+                        <div key={`empty-${i}`} className="h-10"></div>
+                      ))}
+                      
                       {Array.from({length: 31}).map((_, i) => {
                         const date = i + 1;
-                        const eventsOnDay = ONGOING_EVENTS.filter(e => date >= e.startDay && date <= e.endDay);
+                        // 计算 2026年5月x日 是星期几。2026-05-01 是周五(5)
+                        const dayOfWeek = (date + 4) % 7; 
+                        
+                        const eventsOnDay = ONGOING_EVENTS.filter(e => {
+                          const inRange = date >= e.startDay && date <= e.endDay;
+                          const matchesDay = e.daysOfWeek ? e.daysOfWeek.includes(dayOfWeek) : true;
+                          return inRange && matchesDay;
+                        });
+                        
                         const isEventDay = eventsOnDay.length > 0;
                         const isSelected = date === selectedDate;
                         
-                        const isStart = eventsOnDay.some(e => e.startDay === date);
-                        const isEnd = eventsOnDay.some(e => e.endDay === date);
-                        const isMid = eventsOnDay.some(e => date > e.startDay && date < e.endDay);
+                        // For styling connected background for multi-day events
+                        // We only connect if the *next* or *previous* day also has the SAME event
+                        const isStart = eventsOnDay.some(e => 
+                          e.startDay === date || 
+                          (e.daysOfWeek && !e.daysOfWeek.includes((date - 1 + 4) % 7))
+                        );
+                        const isEnd = eventsOnDay.some(e => 
+                          e.endDay === date || 
+                          (e.daysOfWeek && !e.daysOfWeek.includes((date + 1 + 4) % 7))
+                        );
+                        const isMid = isEventDay && !isStart && !isEnd;
 
                         return (
                           <div key={i} className="relative flex items-center justify-center h-10">
@@ -603,13 +680,18 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                   <h4 className="font-bold text-gray-800 mb-3 px-1">5月{selectedDate}日 赛事活动</h4>
                   <div className="space-y-3">
                     {(() => {
-                      const selectedEvents = ONGOING_EVENTS.filter(e => selectedDate >= e.startDay && selectedDate <= e.endDay);
+                      const dayOfWeek = (selectedDate + 4) % 7; 
+                      const selectedEvents = ONGOING_EVENTS.filter(e => {
+                        const inRange = selectedDate >= e.startDay && selectedDate <= e.endDay;
+                        const matchesDay = e.daysOfWeek ? e.daysOfWeek.includes(dayOfWeek) : true;
+                        return inRange && matchesDay;
+                      });
                       if (selectedEvents.length === 0) {
                         return <div className="text-center text-gray-400 py-8 text-[13px]">当日暂无大型赛事活动</div>;
                       }
                       return selectedEvents.map(event => (
                         <div key={event.id} onClick={() => setActiveSubPage({ title: event.title, type: 'event', data: event })} className="bg-white rounded-xl p-3 shadow-sm flex gap-3 cursor-pointer active:scale-95 transition-transform">
-                          <img src={event.img} className="w-20 h-20 rounded-lg object-cover" alt={event.title} />
+                          <img src={event.img} className="w-20 h-20 rounded-lg object-cover" alt={event.title} referrerPolicy="no-referrer" />
                           <div className="flex-1 flex flex-col justify-between">
                             <div>
                               <div className="flex justify-between items-start">
@@ -629,7 +711,7 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                 <div className="pb-24">
                   {/* Hero Header */}
                   <div className="bg-white rounded-2xl p-4 shadow-sm mb-4">
-                    <img src={activeSubPage.data.img} className="w-full h-48 object-cover rounded-xl mb-4" alt={activeSubPage.title} />
+                    <img src={activeSubPage.data.img} className="w-full h-48 object-cover rounded-xl mb-4" alt={activeSubPage.title} referrerPolicy="no-referrer" />
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="text-[20px] font-extrabold text-gray-800 leading-tight pr-2">{activeSubPage.data.title}</h3>
                       <span className="bg-blue-500 text-white text-[12px] px-2.5 py-1 rounded-md font-bold whitespace-nowrap shadow-sm">
@@ -663,9 +745,13 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                       {/* Tabs */}
                       <div className="flex bg-gray-100/80 p-1 rounded-xl mb-4 overflow-x-auto scrollbar-hide">
                         <button 
+                          className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'ticket' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`} 
+                          onClick={() => setEventTab('ticket')}
+                        >报名预约</button>
+                        <button 
                           className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'pre' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`} 
                           onClick={() => setEventTab('pre')}
-                        >赛前报名</button>
+                        >赛前准备</button>
                         <button 
                           className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'mid' ? 'bg-white shadow-sm text-orange-600' : 'text-gray-500'}`} 
                           onClick={() => setEventTab('mid')}
@@ -678,13 +764,46 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                           className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'service' ? 'bg-white shadow-sm text-purple-600' : 'text-gray-500'}`} 
                           onClick={() => setEventTab('service')}
                         >周边服务</button>
+                        <button 
+                          className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'gallery' ? 'bg-white shadow-sm text-pink-600' : 'text-gray-500'}`} 
+                          onClick={() => setEventTab('gallery')}
+                        >精彩瞬间</button>
                       </div>
+
+                      {/* Tab Content: Ticket/Booking */}
+                      {eventTab === 'ticket' && (
+                        <div className="bg-white rounded-2xl p-4 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+                          <h4 className="font-bold text-[16px] text-gray-800 flex items-center gap-2 mb-3 border-b pb-2">
+                            <span className="w-1 h-4 bg-blue-500 rounded-full"></span> 报名与抽签
+                          </h4>
+                          <div className="space-y-3">
+                            <div>
+                              <p className="text-[14px] font-bold text-gray-700 mb-1">🎟️ 参赛名额与抽签</p>
+                              <p className="text-[13px] text-gray-600 leading-relaxed bg-gray-50 p-2 rounded-lg">总规模 30,000 人（全马10k，半马15k，欢乐跑5k）。往届全马中签率约 35%。设有慈善名额与家庭亲子跑组别。</p>
+                            </div>
+                            <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 flex justify-between items-center">
+                              <div>
+                                <p className="text-[14px] font-bold text-blue-800">全半马报名费</p>
+                                <p className="text-[12px] text-blue-600">¥200 / 人</p>
+                              </div>
+                              <button 
+                                className="bg-blue-500 text-white px-4 py-1.5 rounded-full text-[13px] font-bold shadow-sm active:scale-95"
+                                onClick={() => {
+                                  const title = activeSubPage.data.title;
+                                  setActiveSubPage(null); 
+                                  setTimeout(() => handleAsk(`我想报名参加 ${title}`), 300);
+                                }}
+                              >立即报名</button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Tab Content: Pre-Race */}
                       {eventTab === 'pre' && (
                         <div className="bg-white rounded-2xl p-4 shadow-sm animate-in fade-in slide-in-from-bottom-2">
                           <h4 className="font-bold text-[16px] text-gray-800 flex items-center gap-2 mb-3 border-b pb-2">
-                            <span className="w-1 h-4 bg-blue-500 rounded-full"></span> 赛前：报名与赛事基础信息
+                            <span className="w-1 h-4 bg-blue-500 rounded-full"></span> 赛前：赛事基础信息
                           </h4>
                           
                           {/* Route Map (Graphic) */}
@@ -707,10 +826,6 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                             <div>
                               <p className="text-[14px] font-bold text-gray-700 mb-1">🗺️ 赛道信息与路线</p>
                               <p className="text-[13px] text-gray-600 leading-relaxed bg-gray-50 p-2 rounded-lg"><strong>路线：</strong>{activeSubPage.data.route}<br/>全程里程准确，城市主干道全封闭。整体爬升较小（约150m），途经观山湖风景区，沿途风景优美，折返点较少，是一条非常适合PB的“平缓赛道”。</p>
-                            </div>
-                            <div>
-                              <p className="text-[14px] font-bold text-gray-700 mb-1">🎟️ 参赛名额与抽签</p>
-                              <p className="text-[13px] text-gray-600 leading-relaxed bg-gray-50 p-2 rounded-lg">总规模 30,000 人（全马10k，半马15k，欢乐跑5k）。往届全马中签率约 35%。设有慈善名额与家庭亲子跑组别。</p>
                             </div>
                             <div>
                               <p className="text-[14px] font-bold text-gray-700 mb-1">🛍️ 参赛包物资</p>
@@ -897,11 +1012,45 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                           </div>
                         </div>
                       )}
+                      {/* Tab Content: Gallery (Masonry) */}
+                      {eventTab === 'gallery' && activeSubPage.data.gallery && (
+                        <div className="bg-white rounded-2xl p-3 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+                          <h4 className="font-bold text-[16px] text-gray-800 flex items-center gap-2 mb-3 border-b pb-2 px-1">
+                            <span className="w-1 h-4 bg-pink-500 rounded-full"></span> 历届精彩瞬间
+                          </h4>
+                          
+                          <div className="columns-2 gap-1.5 space-y-1.5">
+                            {activeSubPage.data.gallery.map((img: any, idx: number) => {
+                              const heights = ['h-36', 'h-48', 'h-56', 'h-40'];
+                              const heightClass = heights[idx % heights.length];
+                              
+                              return (
+                                <div 
+                                  key={idx} 
+                                  onClick={() => setPreviewImage(img.url)}
+                                  className={`relative rounded-lg overflow-hidden shadow-sm border border-gray-100 break-inside-avoid ${heightClass} group cursor-pointer active:scale-[0.98] transition-transform`}
+                                >
+                                  <img 
+                                    src={img.url} 
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                                    alt="Gallery Image" 
+                                    referrerPolicy="no-referrer"
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : activeSubPage.data?.type === 'music' ? (
                     <div className="space-y-4">
                       {/* Tabs */}
                       <div className="flex bg-gray-100/80 p-1 rounded-xl mb-4 overflow-x-auto scrollbar-hide">
+                        <button 
+                          className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'ticket' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`} 
+                          onClick={() => setEventTab('ticket')}
+                        >在线购票</button>
                         <button 
                           className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'pre' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`} 
                           onClick={() => setEventTab('pre')}
@@ -918,20 +1067,63 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                           className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'service' ? 'bg-white shadow-sm text-purple-600' : 'text-gray-500'}`} 
                           onClick={() => setEventTab('service')}
                         >吃住与游玩</button>
+                        <button 
+                          className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'gallery' ? 'bg-white shadow-sm text-pink-600' : 'text-gray-500'}`} 
+                          onClick={() => setEventTab('gallery')}
+                        >精彩瞬间</button>
                       </div>
+
+                      {/* Tab Content: Ticket/Booking */}
+                      {eventTab === 'ticket' && (
+                        <div className="bg-white rounded-2xl p-4 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+                          <h4 className="font-bold text-[16px] text-gray-800 flex items-center gap-2 mb-3 border-b pb-2">
+                            <span className="w-1 h-4 bg-blue-500 rounded-full"></span> 票务与入场
+                          </h4>
+                          <div className="space-y-3">
+                            <div>
+                              <p className="text-[14px] font-bold text-gray-700 mb-1">🎫 门票信息</p>
+                              <p className="text-[13px] text-gray-600 leading-relaxed bg-gray-50 p-2 rounded-lg">采用【实名制购票+刷身份证入场】，不支持转赠退换。入场时间：13:00 - 20:30。</p>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="bg-white border border-gray-100 p-3 rounded-xl flex justify-between items-center shadow-sm">
+                                <div>
+                                  <p className="text-[14px] font-bold text-gray-800">单日预售票</p>
+                                  <p className="text-[12px] text-gray-500">限量发售</p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-orange-500 font-bold text-[16px]">¥299</span>
+                                  <button className="bg-blue-500 text-white px-4 py-1.5 rounded-full text-[13px] font-bold" onClick={() => {
+                                    setActiveSubPage(null); 
+                                    setTimeout(() => handleAsk(`我想购买门票 ${activeSubPage.data.title}`), 300);
+                                  }}>购票</button>
+                                </div>
+                              </div>
+                              <div className="bg-white border border-gray-100 p-3 rounded-xl flex justify-between items-center shadow-sm">
+                                <div>
+                                  <p className="text-[14px] font-bold text-gray-800">三日通票</p>
+                                  <p className="text-[12px] text-gray-500">畅享三天</p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-orange-500 font-bold text-[16px]">¥799</span>
+                                  <button className="bg-blue-500 text-white px-4 py-1.5 rounded-full text-[13px] font-bold" onClick={() => {
+                                    setActiveSubPage(null); 
+                                    setTimeout(() => handleAsk(`我想购买门票 ${activeSubPage.data.title}`), 300);
+                                  }}>购票</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Tab Content: Pre-Festival */}
                       {eventTab === 'pre' && (
                         <div className="bg-white rounded-2xl p-4 shadow-sm animate-in fade-in slide-in-from-bottom-2">
                           <h4 className="font-bold text-[16px] text-gray-800 flex items-center gap-2 mb-3 border-b pb-2">
-                            <span className="w-1 h-4 bg-blue-500 rounded-full"></span> 行前：票务与装备指南
+                            <span className="w-1 h-4 bg-blue-500 rounded-full"></span> 行前：装备指南与演出阵容
                           </h4>
 
                           <div className="space-y-3">
-                            <div>
-                              <p className="text-[14px] font-bold text-gray-700 mb-1">🎫 票务与入场</p>
-                              <p className="text-[13px] text-gray-600 leading-relaxed bg-gray-50 p-2 rounded-lg">单日预售票 ¥299，全价票 ¥399，三日通票 ¥799。采用【实名制购票+刷身份证入场】，不支持转赠退换。入场时间：13:00 - 20:30。</p>
-                            </div>
                             <div>
                               <p className="text-[14px] font-bold text-gray-700 mb-1">🎤 演出阵容与时刻表</p>
                               <p className="text-[13px] text-gray-600 leading-relaxed bg-gray-50 p-2 rounded-lg">三大主题舞台：【黄果树舞台】主打流行/摇滚，【小七孔舞台】主打独立/民谣，【西江舞台】主打电音/说唱。核心压轴乐队将于每晚 20:40 登场。</p>
@@ -1096,11 +1288,45 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                           </div>
                         </div>
                       )}
+                      {/* Tab Content: Gallery (Masonry) */}
+                      {eventTab === 'gallery' && activeSubPage.data.gallery && (
+                        <div className="bg-white rounded-2xl p-3 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+                          <h4 className="font-bold text-[16px] text-gray-800 flex items-center gap-2 mb-3 border-b pb-2 px-1">
+                            <span className="w-1 h-4 bg-pink-500 rounded-full"></span> 历届精彩瞬间
+                          </h4>
+                          
+                          <div className="columns-2 gap-1.5 space-y-1.5">
+                            {activeSubPage.data.gallery.map((img: any, idx: number) => {
+                              const heights = ['h-36', 'h-48', 'h-56', 'h-40'];
+                              const heightClass = heights[idx % heights.length];
+                              
+                              return (
+                                <div 
+                                  key={idx} 
+                                  onClick={() => setPreviewImage(img.url)}
+                                  className={`relative rounded-lg overflow-hidden shadow-sm border border-gray-100 break-inside-avoid ${heightClass} group cursor-pointer active:scale-[0.98] transition-transform`}
+                                >
+                                  <img 
+                                    src={img.url} 
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                                    alt="Gallery Image" 
+                                    referrerPolicy="no-referrer"
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : activeSubPage.data?.type === 'series' ? (
                     <div className="space-y-4">
                       {/* Tabs */}
                       <div className="flex bg-gray-100/80 p-1 rounded-xl mb-4 overflow-x-auto scrollbar-hide">
+                        <button 
+                          className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'ticket' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`} 
+                          onClick={() => setEventTab('ticket')}
+                        >预约观赛</button>
                         <button 
                           className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'schedule' ? 'bg-white shadow-sm text-red-600' : 'text-gray-500'}`} 
                           onClick={() => setEventTab('schedule')}
@@ -1117,7 +1343,40 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                           className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'post' ? 'bg-white shadow-sm text-green-600' : 'text-gray-500'}`} 
                           onClick={() => setEventTab('post')}
                         >赛后周边</button>
+                        <button 
+                          className={`flex-shrink-0 px-4 py-2 text-[14px] font-bold rounded-lg transition-colors ${eventTab === 'gallery' ? 'bg-white shadow-sm text-pink-600' : 'text-gray-500'}`} 
+                          onClick={() => setEventTab('gallery')}
+                        >精彩瞬间</button>
                       </div>
+
+                      {/* Tab Content: Ticket/Booking */}
+                      {eventTab === 'ticket' && (
+                        <div className="bg-white rounded-2xl p-4 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+                          <h4 className="font-bold text-[16px] text-gray-800 flex items-center gap-2 mb-3 border-b pb-2">
+                            <span className="w-1 h-4 bg-blue-500 rounded-full"></span> 观赛预约指南
+                          </h4>
+                          <div className="space-y-3">
+                            <div>
+                              <p className="text-[14px] font-bold text-gray-700 mb-1">🎟️ 门票与入场</p>
+                              <p className="text-[13px] text-gray-600 leading-relaxed bg-gray-50 p-2 rounded-lg">村超比赛<strong>全程免费，免门票</strong>。观众席分为各村啦啦队专区和散客区，散客区先到先得，建议提前2小时进场占座。</p>
+                            </div>
+                            <div className="bg-green-50 p-3 rounded-xl border border-green-100 flex justify-between items-center">
+                              <div>
+                                <p className="text-[14px] font-bold text-green-800">内场VIP观赛席</p>
+                                <p className="text-[12px] text-green-600">限量预约体验</p>
+                              </div>
+                              <button 
+                                className="bg-green-500 text-white px-4 py-1.5 rounded-full text-[13px] font-bold shadow-sm active:scale-95"
+                                onClick={() => {
+                                  const title = activeSubPage.data.title;
+                                  setActiveSubPage(null); 
+                                  setTimeout(() => handleAsk(`我想预约观赛 ${title}`), 300);
+                                }}
+                              >立即预约</button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Tab Content: Schedule */}
                       {eventTab === 'schedule' && (
@@ -1157,6 +1416,18 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                               </div>
                             ))}
                           </div>
+                          
+                          {/* 查看全部赛程入口 */}
+                          <div className="mt-5 border-t border-gray-100 pt-4">
+                            <button 
+                              onClick={() => setShowFullSchedule(true)}
+                              className="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors active:scale-95"
+                            >
+                              <Calendar size={16} />
+                              查看全部赛程 (历史比分 & 对阵表)
+                            </button>
+                          </div>
+                          
                           <p className="text-[11px] text-gray-400 mt-4 text-center">* 赛程可能会根据天气情况进行微调，请以现场广播为准。</p>
                         </div>
                       )}
@@ -1208,10 +1479,6 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                             <span className="w-1 h-4 bg-orange-500 rounded-full"></span> 现场：沉浸式民族大联欢
                           </h4>
                           <div className="space-y-4">
-                            <div>
-                              <p className="text-[14px] font-bold text-gray-700 mb-1">🎟️ 观赛指南</p>
-                              <p className="text-[13px] text-gray-600 leading-relaxed bg-gray-50 p-2 rounded-lg">村超比赛<strong>全程免费，免门票</strong>。观众席分为各村啦啦队专区和散客区，建议提前2小时进场占座。场内允许携带食物和饮料，倡导“无痕观赛”。</p>
-                            </div>
                             <div>
                               <p className="text-[14px] font-bold text-gray-700 mb-1">🎭 赛前入场巡游</p>
                               <p className="text-[13px] text-gray-600 leading-relaxed bg-gray-50 p-2 rounded-lg">各村代表队入场时，村民们会身着盛装，吹着芦笙、敲着铜鼓，肩挑当地特产（如西瓜、香羊、本地稻花鱼）绕场巡游，是一场生动的民族服饰大秀。</p>
@@ -1288,6 +1555,36 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                           </div>
                         </div>
                       )}
+                      {/* Tab Content: Gallery (Masonry) */}
+                      {eventTab === 'gallery' && activeSubPage.data.gallery && (
+                        <div className="bg-white rounded-2xl p-3 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+                          <h4 className="font-bold text-[16px] text-gray-800 flex items-center gap-2 mb-3 border-b pb-2 px-1">
+                            <span className="w-1 h-4 bg-pink-500 rounded-full"></span> 历届精彩瞬间
+                          </h4>
+                          
+                          <div className="columns-2 gap-1.5 space-y-1.5">
+                            {activeSubPage.data.gallery.map((img: any, idx: number) => {
+                              const heights = ['h-36', 'h-48', 'h-56', 'h-40'];
+                              const heightClass = heights[idx % heights.length];
+                              
+                              return (
+                                <div 
+                                  key={idx} 
+                                  onClick={() => setPreviewImage(img.url)}
+                                  className={`relative rounded-lg overflow-hidden shadow-sm border border-gray-100 break-inside-avoid ${heightClass} group cursor-pointer active:scale-[0.98] transition-transform`}
+                                >
+                                  <img 
+                                    src={img.url} 
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                                    alt="Gallery Image" 
+                                    referrerPolicy="no-referrer"
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="bg-white rounded-2xl p-4 shadow-sm">
@@ -1297,21 +1594,6 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                       </p>
                     </div>
                   )}
-                  
-                  {/* Action Button Sticky Footer */}
-                  <div className="absolute bottom-0 left-0 w-full bg-white/90 backdrop-blur-md p-4 pb-8 border-t border-gray-100 shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-50">
-                    <button 
-                      className="w-full bg-blue-500 text-white font-bold py-3.5 rounded-full shadow-lg shadow-blue-500/30 active:scale-95 transition-transform flex justify-center items-center gap-2" 
-                      onClick={() => { 
-                        const title = activeSubPage.data.title;
-                        setActiveSubPage(null); 
-                        setTimeout(() => handleAsk(`我想报名参加或了解${title}`), 300);
-                      }}
-                    >
-                      <Sparkles size={18} />
-                      一键咨询管家该赛事
-                    </button>
-                  </div>
                 </div>
               ) : (
                 <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center justify-center h-72 text-center mt-4">
@@ -1330,6 +1612,143 @@ export default function SportsAssistant({ onNavigate }: { onNavigate: (page: Pag
                   </button>
                 </div>
               )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Full Schedule Modal */}
+      <AnimatePresence>
+        {showFullSchedule && activeSubPage?.data?.fullSchedule && (
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="absolute inset-0 z-[110] bg-[#F5F7FA] flex flex-col"
+          >
+            {/* Modal Header */}
+            <div className="pt-12 px-4 pb-4 flex items-center border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
+              <button onClick={() => setShowFullSchedule(false)} className="w-8 h-8 flex items-center justify-center -ml-2 active:scale-95 transition-transform">
+                <ChevronLeft size={24} className="text-gray-800" />
+              </button>
+              <h2 className="flex-1 text-center font-bold text-[17px] pr-6 text-gray-800">全部赛程一览表</h2>
+            </div>
+
+            {/* Modal Content */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-6">
+              {activeSubPage.data.fullSchedule.map((phaseData: any, phaseIdx: number) => (
+                <div key={phaseIdx} className="bg-white rounded-2xl p-4 shadow-sm">
+                  <h3 className="font-bold text-[15px] text-gray-800 mb-4 flex items-center gap-2">
+                    <div className={`w-1.5 h-4 rounded-full ${
+                      phaseData.phase.includes('已结束') ? 'bg-gray-400' :
+                      phaseData.phase.includes('进行中') ? 'bg-green-500' : 'bg-blue-500'
+                    }`}></div>
+                    {phaseData.phase}
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    {phaseData.matches.map((match: any) => (
+                      <div key={match.id} className="relative bg-gray-50 border border-gray-100 rounded-xl p-3 overflow-hidden">
+                        {/* Status Label */}
+                        <div className="flex justify-between items-center mb-3">
+                          <div className="flex items-center gap-2">
+                            <Calendar size={13} className="text-gray-400" />
+                            <span className="text-[12px] font-medium text-gray-600">{match.date} {match.time}</span>
+                          </div>
+                          {match.status === 'finished' && (
+                            <span className="bg-gray-200 text-gray-600 text-[10px] px-2 py-0.5 rounded-full font-bold">已结束</span>
+                          )}
+                          {match.status === 'upcoming' && (
+                            <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>未开始
+                            </span>
+                          )}
+                          {match.status === 'tbd' && (
+                            <span className="bg-blue-50 text-blue-500 border border-blue-100 text-[10px] px-2 py-0.5 rounded-full font-bold">待定 (TBD)</span>
+                          )}
+                        </div>
+
+                        {/* Match Teams & Score */}
+                        <div className="flex justify-between items-center">
+                          <div className="flex-1 text-center">
+                            <span className={`font-bold text-[15px] ${match.status === 'tbd' ? 'text-gray-400 border-b border-dashed border-gray-300 pb-0.5' : 'text-gray-800'}`}>
+                              {match.teamA}
+                            </span>
+                          </div>
+                          
+                          <div className="w-20 text-center flex flex-col items-center justify-center">
+                            {match.status === 'finished' ? (
+                              <div className="bg-gray-800 text-white font-black text-[18px] px-3 py-1 rounded-lg tracking-widest shadow-inner">
+                                {match.score}
+                              </div>
+                            ) : match.status === 'upcoming' ? (
+                              <div className="text-gray-300 font-black text-[16px] italic">VS</div>
+                            ) : (
+                              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold">?</div>
+                            )}
+                          </div>
+
+                          <div className="flex-1 text-center">
+                            <span className={`font-bold text-[15px] ${match.status === 'tbd' ? 'text-gray-400 border-b border-dashed border-gray-300 pb-0.5' : 'text-gray-800'}`}>
+                              {match.teamB}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Final Match Highlight */}
+                        {match.isFinal && (
+                          <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden pointer-events-none">
+                            <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[9px] font-bold py-1 w-24 text-center absolute top-3 -right-6 rotate-45 shadow-sm">
+                              总决赛
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              
+              <div className="pb-8 pt-4 flex justify-center">
+                <button 
+                  onClick={() => setShowFullSchedule(false)}
+                  className="bg-white text-gray-600 font-medium px-6 py-2.5 rounded-full shadow-sm border border-gray-200 active:scale-95 transition-transform"
+                >
+                  返回赛事详情
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Image Preview Lightbox */}
+      <AnimatePresence>
+        {previewImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[120] bg-black/95 flex flex-col backdrop-blur-sm"
+          >
+            <div className="p-4 flex justify-end">
+              <button 
+                onClick={() => setPreviewImage(null)}
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white active:scale-95 transition-transform"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="flex-1 flex items-center justify-center p-4">
+              <motion.img
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.9 }}
+                src={previewImage}
+                className="max-w-full max-h-full object-contain rounded-lg"
+                alt="Preview"
+              />
             </div>
           </motion.div>
         )}

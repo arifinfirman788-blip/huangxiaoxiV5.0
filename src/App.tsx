@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home, Map as MapIcon, Plus, ShoppingBag, User } from 'lucide-react';
 import HomePage from './pages/Home';
 import TripList from './pages/TripList';
@@ -14,16 +14,37 @@ import DigitalAvatar from './pages/DigitalAvatar';
 import DigitalCard from './pages/DigitalCard';
 import CardFavorites from './pages/CardFavorites';
 import SportsAssistant from './pages/SportsAssistant';
+import MapExplore from './pages/MapExplore';
+import Footprint from './pages/Footprint';
+import UGCDetail from './pages/UGCDetail';
+import WidgetDetail from './pages/WidgetDetail';
+import AdminLayout from './pages/admin/AdminLayout';
+import WeekendDetail from './pages/WeekendDetail';
+import RankingDetail from './pages/RankingDetail';
+import WeatherDetail from './pages/WeatherDetail';
+import TrafficDetail from './pages/TrafficDetail';
+import CouponDetail from './pages/CouponDetail';
+import WeekendH5 from './pages/WeekendH5';
 import AddSheet from './components/AddSheet';
 import OnboardingGuide from './components/OnboardingGuide';
 import SmartImport from './pages/SmartImport';
 import { Page } from './types';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, CheckCircle2, Loader2 } from 'lucide-react';
+import { Sparkles, CheckCircle2, Loader2, LayoutDashboard } from 'lucide-react';
+import { getConfig, subscribeConfig } from './store';
 
 export default function App() {
+  const [config, setLocalConfig] = useState(() => getConfig());
+  
+  useEffect(() => {
+    const unsubscribe = subscribeConfig(() => {
+      setLocalConfig(getConfig());
+    });
+    return unsubscribe;
+  }, []);
+
   const [currentPage, setCurrentPage] = useState<Page>('home');
-  const [currentAgentTitle, setCurrentAgentTitle] = useState<string>('黄小西');
+  const [currentAgentTitle, setCurrentAgentTitle] = useState<string>(() => getConfig().agentName);
   const [chatData, setChatData] = useState<any>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
@@ -48,10 +69,15 @@ export default function App() {
     };
   }, []);
 
+  // Update agent title when config changes
+  React.useEffect(() => {
+    setCurrentAgentTitle(config.agentName);
+  }, [config.agentName]);
+
   const handleNavigate = (page: Page, data?: any) => {
     setCurrentPage(page);
     if (page === 'chat') {
-      setCurrentAgentTitle(data?.agentTitle || '黄小西');
+      setCurrentAgentTitle(data?.agentTitle || config.agentName);
       setChatData(data);
     }
   };
@@ -86,16 +112,28 @@ export default function App() {
       case 'card-favorites': return <CardFavorites onNavigate={handleNavigate} />;
       case 'smart-import': return <SmartImport onNavigate={handleNavigate} />;
       case 'sports-assistant': return <SportsAssistant onNavigate={handleNavigate} />;
+      case 'map-explore': return <MapExplore onNavigate={handleNavigate} />;
+      case 'footprint': return <Footprint onNavigate={handleNavigate} />;
+      case 'ugc-detail': return <UGCDetail onNavigate={handleNavigate} data={chatData} />;
+      case 'widget-detail': return <WidgetDetail onNavigate={handleNavigate} data={chatData} />;
+      case 'ranking-detail': return <RankingDetail onNavigate={handleNavigate} />;
+      case 'weekend-detail': return <WeekendDetail onNavigate={handleNavigate} />;
+      case 'weekend-h5': return <WeekendH5 onNavigate={handleNavigate} />;
+      case 'admin': return <AdminLayout onNavigate={handleNavigate} />;
       default: return <HomePage onNavigate={handleNavigate} />;
     }
   };
 
   const showBottomNav = ['home', 'trip-list', 'mall', 'profile'].includes(currentPage);
 
+  if (currentPage === 'admin') {
+    return <AdminLayout onNavigate={handleNavigate} />;
+  }
+
   return (
     <div className="w-full h-screen bg-gray-100 flex items-center justify-center overflow-hidden font-sans">
       {/* Mobile Container (iPhone 14 Pro dimensions approx) */}
-      <div data-guide-container className="w-full h-full sm:w-[393px] sm:h-[852px] sm:rounded-[3rem] sm:shadow-2xl bg-white relative flex flex-col overflow-hidden sm:border-[8px] sm:border-gray-900">
+      <div data-guide-container className="w-full h-full sm:w-[393px] sm:h-[852px] sm:rounded-[3rem] sm:shadow-2xl bg-white relative flex flex-col overflow-hidden sm:border-[8px] sm:border-gray-900 transform-gpu">
         
         {/* Global Click Interceptor for Logged Out State */}
         {!isLoggedIn && currentPage !== 'login' && (
@@ -175,6 +213,26 @@ export default function App() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Floating PC Admin Toggle Button */}
+      {currentPage !== 'admin' && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleNavigate('admin')}
+          className="fixed bottom-8 right-8 z-[9999] bg-gray-900 text-white p-4 rounded-2xl shadow-2xl shadow-gray-900/30 flex items-center gap-3 border border-gray-700/50 hidden sm:flex"
+        >
+          <div className="bg-white/10 p-2 rounded-xl">
+            <LayoutDashboard size={24} className="text-indigo-400" />
+          </div>
+          <div className="text-left pr-2">
+            <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Switch to</div>
+            <div className="text-sm font-bold tracking-wide">PC Admin Portal</div>
+          </div>
+        </motion.button>
+      )}
     </div>
   );
 }
